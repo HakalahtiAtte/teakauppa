@@ -16,7 +16,7 @@ export default function HomePage() {
         </p>
         <Link
           href="/shop"
-          className="mt-10 inline-flex items-center justify-center rounded-full bg-[#C8956C] px-8 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+          className="mt-10 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
           aria-label="Browse the shop"
         >
           Shop now
@@ -52,7 +52,7 @@ export default function HomePage() {
             </p>
             <Link
               href="/shop"
-              className="self-start inline-flex items-center justify-center rounded-full border border-[#C8956C] px-8 py-3 text-sm font-semibold text-[#C8956C] transition-colors duration-200 hover:bg-[#C8956C] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+              className="self-start inline-flex items-center justify-center rounded-full border border-[#8B5E3C] px-8 py-3 text-sm font-semibold text-[#8B5E3C] transition-colors duration-200 hover:bg-[#8B5E3C] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
               aria-label="Try the customiser on any shirt"
             >
               Try it on a shirt
@@ -61,10 +61,10 @@ export default function HomePage() {
 
           <div className="flex items-center justify-center rounded-2xl bg-neutral-100 p-12">
             <div className="flex flex-col items-center gap-4 text-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#C8956C]/10">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#8B5E3C]/10">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-9 w-9 text-[#C8956C]"
+                  className="h-9 w-9 text-[#8B5E3C]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -80,7 +80,7 @@ export default function HomePage() {
               >
                 Live on every product page
               </p>
-              <p className="text-xs text-neutral-400">Pick a shirt and try it</p>
+              <p className="text-xs text-neutral-500">Pick a shirt and try it</p>
             </div>
           </div>
         </div>

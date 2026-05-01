@@ -62,7 +62,7 @@ export default function CartPage() {
         <p className="text-neutral-500">Looks like you haven&apos;t added anything yet.</p>
         <Link
           href="/shop"
-          className="inline-flex items-center justify-center rounded-full bg-[#C8956C] px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+          className="inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
         >
           Browse shirts
         </Link>
@@ -97,8 +97,8 @@ export default function CartPage() {
 
             <div className="flex flex-col gap-1 flex-1 min-w-0">
               <h2 className="font-semibold text-[#111111] truncate">{item.product.name}</h2>
-              <p className="text-sm text-neutral-400">Size: {item.size}</p>
-              <p className="text-sm font-medium text-[#C8956C]">
+              <p className="text-sm text-neutral-500">Size: {item.size}</p>
+              <p className="text-sm font-medium text-[#8B5E3C]">
                 {formatPrice(item.product.priceInCents)}
               </p>
             </div>
@@ -107,7 +107,7 @@ export default function CartPage() {
               <div className="flex items-center gap-2" role="group" aria-label={`Quantity for ${item.product.name}`}>
                 <button
                   onClick={() => updateQuantity(item.product.id, item.size, item.quantity - 1)}
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-100 text-[#111111] hover:bg-neutral-200 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-100 text-[#111111] hover:bg-neutral-200 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
                   aria-label={`Decrease quantity of ${item.product.name}`}
                 >
                   −
@@ -117,7 +117,7 @@ export default function CartPage() {
                 </span>
                 <button
                   onClick={() => updateQuantity(item.product.id, item.size, item.quantity + 1)}
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-100 text-[#111111] hover:bg-neutral-200 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-neutral-100 text-[#111111] hover:bg-neutral-200 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
                   aria-label={`Increase quantity of ${item.product.name}`}
                 >
                   +
@@ -143,7 +143,7 @@ export default function CartPage() {
           <span className="text-sm text-neutral-500">Subtotal</span>
           <span className="text-2xl font-bold text-[#111111]">{formatPrice(subtotalCents)}</span>
         </div>
-        <p className="text-xs text-neutral-400">
+        <p className="text-xs text-neutral-500">
           Test mode — use card number <span className="font-mono">4242 4242 4242 4242</span>
         </p>
         {checkoutError && (
@@ -152,7 +152,7 @@ export default function CartPage() {
         <button
           onClick={handleCheckout}
           disabled={isRedirecting}
-          className="inline-flex items-center justify-center rounded-full bg-[#C8956C] px-10 py-4 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+          className="inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-10 py-4 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
           aria-label="Proceed to Stripe checkout"
         >
           {isRedirecting ? 'Redirecting…' : 'Proceed to checkout'}

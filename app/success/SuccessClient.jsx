@@ -35,7 +35,7 @@ export default function SuccessClient() {
   if (status === 'loading') {
     return (
       <div className="mx-auto max-w-2xl px-4 py-32 text-center">
-        <p className="text-neutral-400">Confirming your order…</p>
+        <p className="text-neutral-500">Confirming your order…</p>
       </div>
     )
   }
@@ -52,7 +52,7 @@ export default function SuccessClient() {
         <p className="text-neutral-500">We couldn&apos;t confirm your order. If you were charged, please get in touch.</p>
         <Link
           href="/"
-          className="inline-flex items-center justify-center rounded-full bg-[#C8956C] px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200"
+          className="inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200"
         >
           Back to home
         </Link>
@@ -63,10 +63,10 @@ export default function SuccessClient() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-24 sm:px-6">
       <div className="flex flex-col items-center gap-8 text-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#C8956C]/10">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#8B5E3C]/10">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-9 w-9 text-[#C8956C]"
+            className="h-9 w-9 text-[#8B5E3C]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -90,13 +90,13 @@ export default function SuccessClient() {
         </div>
 
         {session?.customer_details?.email && (
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-neutral-500">
             Confirmation sent to <span className="text-[#111111] font-medium">{session.customer_details.email}</span>
           </p>
         )}
 
         <div className="w-full rounded-2xl bg-neutral-50 border border-neutral-100 p-6 text-left">
-          <p className="text-xs font-medium tracking-widest uppercase text-[#C8956C] mb-4">Order summary</p>
+          <p className="text-xs font-medium tracking-widest uppercase text-[#8B5E3C] mb-4">Order summary</p>
           <div className="flex items-baseline justify-between border-t border-neutral-100 pt-4">
             <span className="text-sm text-neutral-500">Total paid</span>
             <span className="text-lg font-bold text-[#111111]">
@@ -113,13 +113,13 @@ export default function SuccessClient() {
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <Link
             href="/shop"
-            className="inline-flex items-center justify-center rounded-full bg-[#C8956C] px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+            className="inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
           >
             Keep shopping
           </Link>
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-full border border-neutral-200 px-8 py-3 text-sm font-medium text-[#111111] hover:bg-neutral-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+            className="inline-flex items-center justify-center rounded-full border border-neutral-200 px-8 py-3 text-sm font-medium text-[#111111] hover:bg-neutral-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
           >
             Back to home
           </Link>

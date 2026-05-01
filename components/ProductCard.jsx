@@ -31,10 +31,10 @@ export default function ProductCard({ product }) {
       </div>
 
       <div className="flex flex-col items-center gap-1 text-center">
-        <span className="text-xs font-medium tracking-widest uppercase text-[#C8956C]">
+        <span className="text-xs font-medium tracking-widest uppercase text-[#8B5E3C]">
           {category}
         </span>
-        <h3 className="font-semibold text-lg text-[#111111] group-hover:text-[#C8956C] transition-colors duration-200">
+        <h3 className="font-semibold text-lg text-[#111111] group-hover:text-[#8B5E3C] transition-colors duration-200">
           {name}
         </h3>
         <p className="text-sm text-neutral-500">{formattedPrice}</p>

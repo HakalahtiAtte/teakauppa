@@ -82,7 +82,7 @@ export default function MockupEditor({ shirtImageUrl }) {
         width: printArea.width,
         height: printArea.height,
         fill: 'transparent',
-        stroke: '#C8956C',
+        stroke: '#8B5E3C',
         strokeWidth: 1.5,
         strokeDashArray: [6, 4],
         selectable: false,
@@ -150,9 +150,9 @@ export default function MockupEditor({ shirtImageUrl }) {
         scaleY: scale,
         selectable: true,
         hasControls: true,
-        cornerColor: '#C8956C',
+        cornerColor: '#8B5E3C',
         cornerStrokeColor: '#ffffff',
-        borderColor: '#C8956C',
+        borderColor: '#8B5E3C',
         borderScaleFactor: 1.5,
         cornerSize: 10,
         transparentCorners: false,
@@ -217,20 +217,20 @@ export default function MockupEditor({ shirtImageUrl }) {
             className="absolute inset-0 flex items-center justify-center bg-neutral-100 rounded-2xl"
             aria-label="Loading editor"
           >
-            <span className="text-sm text-neutral-400">Loading editor…</span>
+            <span className="text-sm text-neutral-500">Loading editor…</span>
           </div>
         )}
       </div>
 
       {isReady && (
         <div className="flex flex-col items-center gap-4 w-full max-w-xs">
-          <p className="text-xs text-neutral-400 text-center leading-relaxed">
+          <p className="text-xs text-neutral-500 text-center leading-relaxed">
             Position your image inside the dashed box — that&apos;s the print area.
             Drag to move, use corner handles to resize.
           </p>
 
           <label
-            className={`w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-dashed border-[#C8956C] px-6 py-3 text-sm font-medium text-[#C8956C] transition-colors duration-200 hover:bg-[#C8956C]/5 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#C8956C] ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
+            className={`w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-dashed border-[#8B5E3C] px-6 py-3 text-sm font-medium text-[#8B5E3C] transition-colors duration-200 hover:bg-[#8B5E3C]/5 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#8B5E3C] ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -268,7 +268,7 @@ export default function MockupEditor({ shirtImageUrl }) {
             <div className="flex gap-3 w-full">
               <button
                 onClick={handleDownload}
-                className="flex-1 inline-flex items-center justify-center rounded-full bg-[#C8956C] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+                className="flex-1 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
                 aria-label="Download shirt preview as PNG"
               >
                 Download preview

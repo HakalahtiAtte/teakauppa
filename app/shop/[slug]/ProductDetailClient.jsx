@@ -9,7 +9,7 @@ const MockupEditor = dynamic(() => import('@/components/MockupEditor'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-64 rounded-2xl bg-neutral-100">
-      <span className="text-sm text-neutral-400">Loading editor…</span>
+      <span className="text-sm text-neutral-500">Loading editor…</span>
     </div>
   ),
 })
@@ -51,7 +51,7 @@ export default function ProductDetailClient({ product }) {
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <span className="text-xs font-medium tracking-widest uppercase text-[#C8956C]">
+            <span className="text-xs font-medium tracking-widest uppercase text-[#8B5E3C]">
               {category}
             </span>
             <h1
@@ -67,7 +67,7 @@ export default function ProductDetailClient({ product }) {
 
           <div className="flex flex-col gap-3">
             <p className="text-sm font-semibold text-[#111111]" id="size-label">
-              Size {selectedSize && <span className="font-normal text-[#C8956C]">— {selectedSize}</span>}
+              Size {selectedSize && <span className="font-normal text-[#8B5E3C]">— {selectedSize}</span>}
             </p>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby="size-label">
               {sizes.map((size) => (
@@ -75,7 +75,7 @@ export default function ProductDetailClient({ product }) {
                   key={size}
                   onClick={() => setSelectedSize(size)}
                   aria-pressed={selectedSize === size}
-                  className={`rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C] ${
+                  className={`rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C] ${
                     selectedSize === size
                       ? 'bg-[#111111] text-white'
                       : 'bg-neutral-100 text-[#111111] hover:bg-neutral-200'
@@ -95,7 +95,7 @@ export default function ProductDetailClient({ product }) {
                 ? 'Select a size to add to cart'
                 : `Add ${name} in size ${selectedSize} to cart`
             }
-            className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#C8956C] px-8 py-4 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C] sm:w-auto"
+            className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-4 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C] sm:w-auto"
           >
             {added ? 'Added to cart!' : 'Add to Cart'}
           </button>

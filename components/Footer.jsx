@@ -7,18 +7,18 @@ export default function Footer({ playfairClass }) {
         <span className={`${playfairClass} text-lg font-semibold text-[#111111]`}>
           Tea-shirts
         </span>
-        <p className="text-sm text-neutral-400">A portfolio project by Atte Hakalahti</p>
+        <p className="text-sm text-neutral-500">A portfolio project by Atte Hakalahti</p>
         <div className="flex items-center gap-6">
           <Link
             href="#"
-            className="text-sm text-neutral-400 hover:text-[#C8956C] transition-colors duration-200"
+            className="text-sm text-neutral-500 hover:text-[#8B5E3C] transition-colors duration-200"
             aria-label="GitHub repository"
           >
             GitHub
           </Link>
           <Link
             href="https://nextjs.org"
-            className="text-sm text-neutral-400 hover:text-[#C8956C] transition-colors duration-200"
+            className="text-sm text-neutral-500 hover:text-[#8B5E3C] transition-colors duration-200"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Built with Next.js (opens in new tab)"

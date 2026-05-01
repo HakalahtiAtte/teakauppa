@@ -23,9 +23,9 @@ export default function ShopPage() {
             key={filter}
             onClick={() => setActiveFilter(filter)}
             aria-pressed={activeFilter === filter}
-            className={`rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C] ${
+            className={`rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C] ${
               activeFilter === filter
-                ? 'bg-[#C8956C] text-white'
+                ? 'bg-[#8B5E3C] text-white'
                 : 'bg-neutral-100 text-[#111111] hover:bg-neutral-200'
             }`}
           >
