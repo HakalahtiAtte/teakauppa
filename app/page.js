@@ -1,65 +1,90 @@
-import Image from "next/image";
+import Link from 'next/link'
+import ProductGrid from '@/components/ProductGrid'
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      <section className="flex min-h-[calc(100vh-72px)] flex-col items-center justify-center px-4 text-center">
+        <h1
+          className="max-w-2xl text-5xl font-bold leading-tight text-[#111111] sm:text-6xl lg:text-7xl"
+          style={{ fontFamily: 'var(--font-playfair)' }}
+        >
+          Wear your obsession.
+        </h1>
+        <p className="mt-6 max-w-md text-lg text-neutral-500 sm:text-xl">
+          Premium tees for the tea-obsessed.
+        </p>
+        <Link
+          href="/shop"
+          className="mt-10 inline-flex items-center justify-center rounded-full bg-[#C8956C] px-8 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+          aria-label="Browse the shop"
+        >
+          Shop now
+        </Link>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <h2
+          className="mb-12 text-3xl font-bold text-[#111111] sm:text-4xl"
+          style={{ fontFamily: 'var(--font-playfair)' }}
+        >
+          Our favourites
+        </h2>
+        <ProductGrid featured />
+      </section>
+
+      <section
+        id="concept"
+        className="mx-auto max-w-6xl px-4 py-20 sm:px-6"
+      >
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
+          <div className="flex flex-col gap-6">
+            <h2
+              className="text-3xl font-bold text-[#111111] sm:text-4xl"
+              style={{ fontFamily: 'var(--font-playfair)' }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Your tea. Your shirt.
+            </h2>
+            <p className="text-base leading-relaxed text-neutral-500 sm:text-lg">
+              Upload a photo of your tea — your morning cup, your favourite stash,
+              a perfectly-lit flat lay. Place it on the shirt, resize it, download
+              your preview. Every tea has a story; this is how you wear yours.
+            </p>
+            <Link
+              href="/shop"
+              className="self-start inline-flex items-center justify-center rounded-full border border-[#C8956C] px-8 py-3 text-sm font-semibold text-[#C8956C] transition-colors duration-200 hover:bg-[#C8956C] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8956C]"
+              aria-label="Try the customiser on any shirt"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              Try it on a shirt
+            </Link>
+          </div>
+
+          <div className="flex items-center justify-center rounded-2xl bg-neutral-100 p-12">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#C8956C]/10">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-9 w-9 text-[#C8956C]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+              </div>
+              <p
+                className="text-sm font-semibold text-[#111111] tracking-wide uppercase"
+                style={{ fontFamily: 'var(--font-playfair)' }}
+              >
+                Live on every product page
+              </p>
+              <p className="text-xs text-neutral-400">Pick a shirt and try it</p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+      </section>
+    </>
+  )
 }
