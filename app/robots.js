@@ -1,4 +1,4 @@
-const BASE_URL = 'https://tea-shirts.vercel.app'
+const BASE_URL = 'https://teakauppa.vercel.app'
 
 export default function robots() {
   return {

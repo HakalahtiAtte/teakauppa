@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { getProductBySlug, getProducts } from '@/lib/products'
 import ProductDetailClient from './ProductDetailClient'
 
-const BASE_URL = 'https://tea-shirts.vercel.app'
+const BASE_URL = 'https://teakauppa.vercel.app'
 
 export async function generateStaticParams() {
   const products = getProducts()

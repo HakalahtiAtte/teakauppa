@@ -14,7 +14,7 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
 })
 
-const BASE_URL = 'https://tea-shirts.vercel.app'
+const BASE_URL = 'https://teakauppa.vercel.app'
 
 export const metadata = {
   metadataBase: new URL(BASE_URL),
