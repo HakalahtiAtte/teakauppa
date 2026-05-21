@@ -12,6 +12,11 @@ export async function GET(req) {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId)
+
+    if (session.payment_status !== 'paid') {
+      return Response.json({ error: 'Payment not completed' }, { status: 402 })
+    }
+
     return Response.json({
       customer_details: session.customer_details,
       amount_total: session.amount_total,

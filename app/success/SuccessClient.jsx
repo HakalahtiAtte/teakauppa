@@ -21,7 +21,7 @@ export default function SuccessClient() {
     fetch(`/api/checkout/session?session_id=${sessionId}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.error) {
+        if (data.error || data.payment_status !== 'paid') {
           setStatus('error')
           return
         }

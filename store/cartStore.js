@@ -13,6 +13,7 @@ export const useCartStore = create(
           (item) => item.product.id === product.id && item.size === size
         )
         if (existing) {
+          if (existing.quantity >= 10) return
           set((state) => ({
             items: state.items.map((item) =>
               item.product.id === product.id && item.size === size
@@ -40,10 +41,11 @@ export const useCartStore = create(
           get().removeItem(productId, size)
           return
         }
+        const capped = Math.min(quantity, 10)
         set((state) => ({
           items: state.items.map((item) =>
             item.product.id === productId && item.size === size
-              ? { ...item, quantity }
+              ? { ...item, quantity: capped }
               : item
           ),
         }))

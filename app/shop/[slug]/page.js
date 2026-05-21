@@ -24,6 +24,14 @@ export async function generateMetadata({ params }) {
       description: product.description,
       url: `${BASE_URL}/shop/${product.slug}`,
       type: 'website',
+      images: [
+        {
+          url: `${BASE_URL}${product.imageUrl}`,
+          width: 1200,
+          height: 630,
+          alt: product.name,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',

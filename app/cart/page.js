@@ -99,7 +99,12 @@ export default function CartPage() {
               <h2 className="font-semibold text-[#111111] truncate">{item.product.name}</h2>
               <p className="text-sm text-neutral-500">Size: {item.size}</p>
               <p className="text-sm font-medium text-[#8B5E3C]">
-                {formatPrice(item.product.priceInCents)}
+                {formatPrice(item.product.priceInCents * item.quantity)}
+                {item.quantity > 1 && (
+                  <span className="ml-1 font-normal text-neutral-400">
+                    ({formatPrice(item.product.priceInCents)} each)
+                  </span>
+                )}
               </p>
             </div>
 

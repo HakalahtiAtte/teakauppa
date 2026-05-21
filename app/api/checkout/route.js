@@ -23,7 +23,11 @@ export async function POST(req) {
         )
       }
 
-      if (!Number.isInteger(item.quantity) || item.quantity < 1) {
+      if (!product.sizes.includes(item.size)) {
+        return Response.json({ error: `Invalid size: ${item.size}` }, { status: 400 })
+      }
+
+      if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 10) {
         return Response.json({ error: 'Invalid quantity' }, { status: 400 })
       }
 
@@ -40,7 +44,7 @@ export async function POST(req) {
       })
     }
 
-    const origin = req.headers.get('origin') || 'http://localhost:3000'
+    const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
