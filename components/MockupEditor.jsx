@@ -230,7 +230,7 @@ export default function MockupEditor({ shirtImageUrl }) {
           </p>
 
           <label
-            className={`w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-dashed border-[#8B5E3C] px-6 py-3 text-sm font-medium text-[#8B5E3C] transition-colors duration-200 hover:bg-[#8B5E3C]/5 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#8B5E3C] ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
+            className={`w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-dashed border-[#8B5E3C] px-6 py-3 text-sm font-medium text-[#8B5E3C] transition-colors duration-200 hover:bg-[#8B5E3C]/5 focus-within:ring-2 focus-within:ring-[#8B5E3C] focus-within:ring-offset-2 focus-within:outline-none ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -268,14 +268,14 @@ export default function MockupEditor({ shirtImageUrl }) {
             <div className="flex gap-3 w-full">
               <button
                 onClick={handleDownload}
-                className="flex-1 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
+                className="flex-1 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
                 aria-label="Download shirt preview as PNG"
               >
                 Download preview
               </button>
               <button
                 onClick={handleRemoveTea}
-                className="inline-flex items-center justify-center rounded-full bg-neutral-100 px-4 py-3 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-400"
+                className="inline-flex items-center justify-center rounded-full bg-neutral-100 px-4 py-3 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:outline-none"
                 aria-label="Remove uploaded image"
               >
                 Remove
