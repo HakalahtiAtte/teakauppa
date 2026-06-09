@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getProductBySlug, getProducts } from '@/lib/products'
+import { getProductBySlug, getProducts, getRelatedProducts } from '@/lib/products'
 import ProductDetailClient from './ProductDetailClient'
 
 const BASE_URL = 'https://teakauppa.vercel.app'
@@ -15,6 +15,9 @@ export async function generateMetadata({ params }) {
   if (!product) return {}
 
   const price = (product.priceInCents / 100).toFixed(2)
+  const imageForMeta = product.imageUrl.startsWith('http')
+    ? product.imageUrl
+    : `${BASE_URL}${product.imageUrl}`
 
   return {
     title: product.name,
@@ -26,7 +29,7 @@ export async function generateMetadata({ params }) {
       type: 'website',
       images: [
         {
-          url: `${BASE_URL}${product.imageUrl}`,
+          url: imageForMeta,
           width: 1200,
           height: 630,
           alt: product.name,
@@ -47,13 +50,16 @@ export async function generateMetadata({ params }) {
 
 function ProductJsonLd({ product }) {
   const price = (product.priceInCents / 100).toFixed(2)
+  const imageForSchema = product.imageUrl.startsWith('http')
+    ? product.imageUrl
+    : `${BASE_URL}${product.imageUrl}`
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: product.description,
-    image: `${BASE_URL}${product.imageUrl}`,
+    image: imageForSchema,
     offers: {
       '@type': 'Offer',
       price,
@@ -77,10 +83,12 @@ export default async function ProductPage({ params }) {
 
   if (!product) notFound()
 
+  const relatedProducts = getRelatedProducts(product.id, product.category)
+
   return (
     <>
       <ProductJsonLd product={product} />
-      <ProductDetailClient product={product} />
+      <ProductDetailClient product={product} relatedProducts={relatedProducts} />
     </>
   )
 }

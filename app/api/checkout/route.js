@@ -31,11 +31,17 @@ export async function POST(req) {
         return Response.json({ error: 'Invalid quantity' }, { status: 400 })
       }
 
+      const variantParts = []
+      if (item.size) variantParts.push(`Size ${item.size}`)
+      if (item.color) variantParts.push(item.color)
+
       lineItems.push({
         price_data: {
           currency: 'eur',
           product_data: {
-            name: `${product.name} — Size ${item.size}`,
+            name: variantParts.length
+              ? `${product.name} — ${variantParts.join(', ')}`
+              : product.name,
             description: product.description,
           },
           unit_amount: product.priceInCents,

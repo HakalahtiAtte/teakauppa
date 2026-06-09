@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ProductGrid from '@/components/ProductGrid'
+import HowItWorks from '@/components/HowItWorks'
 
 export default function HomePage() {
   return (
@@ -12,11 +13,11 @@ export default function HomePage() {
           Wear your obsession.
         </h1>
         <p className="mt-6 max-w-md text-lg text-neutral-500 sm:text-xl">
-          Premium tees for the tea-obsessed.
+          Premium tees for the tea-obsessed — and a few other things.
         </p>
         <Link
           href="/shop"
-          className="mt-10 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
+          className="mt-10 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
           aria-label="Browse the shop"
         >
           Shop now
@@ -33,6 +34,8 @@ export default function HomePage() {
         <ProductGrid featured />
       </section>
 
+      <HowItWorks />
+
       <section
         id="concept"
         className="mx-auto max-w-6xl px-4 py-20 sm:px-6"
@@ -43,19 +46,19 @@ export default function HomePage() {
               className="text-3xl font-bold text-[#111111] sm:text-4xl"
               style={{ fontFamily: 'var(--font-playfair)' }}
             >
-              Your tea. Your shirt.
+              Your tea. Your way.
             </h2>
             <p className="text-base leading-relaxed text-neutral-500 sm:text-lg">
               Upload a photo of your tea — your morning cup, your favourite stash,
-              a perfectly-lit flat lay. Place it on the shirt, resize it, download
+              a perfectly-lit flat lay. Place it on any product, resize it, download
               your preview. Every tea has a story; this is how you wear yours.
             </p>
             <Link
               href="/shop"
-              className="self-start inline-flex items-center justify-center rounded-full border border-[#8B5E3C] px-8 py-3 text-sm font-semibold text-[#8B5E3C] transition-colors duration-200 hover:bg-[#8B5E3C] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
-              aria-label="Try the customiser on any shirt"
+              className="self-start inline-flex items-center justify-center rounded-full border border-[#8B5E3C] px-8 py-3 text-sm font-semibold text-[#8B5E3C] transition-colors duration-200 hover:bg-[#8B5E3C] hover:text-white focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
+              aria-label="Try the customiser on any product"
             >
-              Try it on a shirt
+              Try it on a product
             </Link>
           </div>
 
@@ -80,7 +83,7 @@ export default function HomePage() {
               >
                 Live on every product page
               </p>
-              <p className="text-xs text-neutral-500">Pick a shirt and try it</p>
+              <p className="text-xs text-neutral-500">Pick a product and try it</p>
             </div>
           </div>
         </div>
