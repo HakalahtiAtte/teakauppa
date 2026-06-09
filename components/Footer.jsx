@@ -7,7 +7,7 @@ export default function Footer({ playfairClass }) {
         <span className={`${playfairClass} text-lg font-semibold text-[#111111]`}>
           Tea-shirts
         </span>
-        <p className="text-sm text-neutral-500">A portfolio project by Atte Hakalahti</p>
+        <p className="text-sm text-neutral-500">A portfolio project</p>
         <div className="flex items-center gap-6">
           <Link
             href="#"
