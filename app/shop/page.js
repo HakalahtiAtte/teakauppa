@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import ProductGrid from '@/components/ProductGrid'
 import { getProducts } from '@/lib/products'
 
-const FILTERS = ['All', 'Classic', 'Minimal', 'Bold']
+const FILTERS = ['All', 'Classic', 'Minimal']
 const SORTS = [
   { value: 'default', label: 'Featured' },
   { value: 'price-asc', label: 'Price: low to high' },
@@ -15,7 +15,6 @@ const HEADING = {
   All: 'Everything',
   Classic: 'Classic',
   Minimal: 'Minimal',
-  Bold: 'Bold',
 }
 
 export default function ShopPage() {
