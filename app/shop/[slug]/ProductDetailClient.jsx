@@ -251,7 +251,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
               Upload a photo of your tea and place it on the product. Download your preview when you&apos;re happy with it.
             </p>
           </div>
-          <MockupEditor shirtImageUrl={imageUrl} />
+          <MockupEditor shirtImageUrl={imageUrl} onAddToCart={handleAddToCart} added={added} />
         </div>
       </div>
 

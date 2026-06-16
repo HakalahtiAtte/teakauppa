@@ -20,7 +20,7 @@ function loadNativeImage(src) {
   })
 }
 
-export default function MockupEditor({ shirtImageUrl }) {
+export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
   const canvasElRef = useRef(null)
   const fabricRef = useRef(null)
   const printAreaRef = useRef(null)
@@ -265,21 +265,32 @@ export default function MockupEditor({ shirtImageUrl }) {
           )}
 
           {hasTeaImage && (
-            <div className="flex gap-3 w-full">
-              <button
-                onClick={handleDownload}
-                className="flex-1 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
-                aria-label="Download shirt preview as PNG"
-              >
-                Download preview
-              </button>
-              <button
-                onClick={handleRemoveTea}
-                className="inline-flex items-center justify-center rounded-full bg-neutral-100 px-4 py-3 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:outline-none"
-                aria-label="Remove uploaded image"
-              >
-                Remove
-              </button>
+            <div className="flex flex-col gap-3 w-full">
+              <div className="flex gap-3 w-full">
+                <button
+                  onClick={handleDownload}
+                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#8B5E3C] px-5 py-3 text-sm font-semibold text-[#8B5E3C] hover:bg-[#8B5E3C]/5 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
+                  aria-label="Download shirt preview as PNG"
+                >
+                  Download preview
+                </button>
+                <button
+                  onClick={handleRemoveTea}
+                  className="inline-flex items-center justify-center rounded-full bg-neutral-100 px-4 py-3 text-sm font-medium text-neutral-600 hover:bg-neutral-200 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2 focus-visible:outline-none"
+                  aria-label="Remove uploaded image"
+                >
+                  Remove
+                </button>
+              </div>
+              {onAddToCart && (
+                <button
+                  onClick={onAddToCart}
+                  className="w-full inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
+                  aria-label="Add customised product to cart"
+                >
+                  {added ? 'Added to cart!' : 'Add to cart'}
+                </button>
+              )}
             </div>
           )}
         </div>
