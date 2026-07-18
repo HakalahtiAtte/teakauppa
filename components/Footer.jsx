@@ -10,9 +10,11 @@ export default function Footer({ playfairClass }) {
         <p className="text-sm text-neutral-500">A portfolio project</p>
         <div className="flex items-center gap-6">
           <Link
-            href="#"
+            href="https://github.com/HakalahtiAtte/teakauppa"
             className="text-sm text-neutral-500 hover:text-[#8B5E3C] transition-colors duration-200"
-            aria-label="GitHub repository"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub repository (opens in new tab)"
           >
             GitHub
           </Link>

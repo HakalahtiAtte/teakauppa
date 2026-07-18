@@ -64,7 +64,7 @@ export default function CartPage() {
           href="/shop"
           className="inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8B5E3C]"
         >
-          Browse shirts
+          Browse the shop
         </Link>
       </div>
     )

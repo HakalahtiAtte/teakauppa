@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
     "@stripe/stripe-js": "^9.4.0",
     "browser-image-compression": "^2.0.2",
     "fabric": "^7.3.1",
@@ -17,9 +16,7 @@
     "next": "16.2.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-hook-form": "^7.74.0",
     "stripe": "^22.1.0",
-    "zod": "^4.4.1",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
