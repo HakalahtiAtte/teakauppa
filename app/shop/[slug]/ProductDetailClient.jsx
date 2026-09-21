@@ -9,6 +9,7 @@ import SizeGuideModal from '@/components/SizeGuideModal'
 import StickyCartBar from '@/components/StickyCartBar'
 import CartToast from '@/components/CartToast'
 import YouMightAlsoLike from '@/components/YouMightAlsoLike'
+import { getProductImage, hasSides } from '@/lib/productImages'
 
 const MockupEditor = dynamic(() => import('@/components/MockupEditor'), {
   ssr: false,
@@ -30,6 +31,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
 
   const [selectedSize, setSelectedSize] = useState(autoSize)
   const [selectedColor, setSelectedColor] = useState(hasColors ? colors[0] : null)
+  const [selectedSide, setSelectedSide] = useState('front')
   const [qty, setQty] = useState(1)
   const [sizeError, setSizeError] = useState(false)
   const [showSizeGuide, setShowSizeGuide] = useState(false)
@@ -58,6 +60,9 @@ export default function ProductDetailClient({ product, relatedProducts }) {
     style: 'currency',
     currency: 'EUR',
   })
+
+  const currentImageUrl = getProductImage(product, selectedColor?.name, selectedSide)
+  const productHasSides = hasSides(product)
 
   const handleAddToCart = useCallback(() => {
     if (hasMultipleSizes && !selectedSize) {
@@ -93,32 +98,53 @@ export default function ProductDetailClient({ product, relatedProducts }) {
       </Link>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
-        {transparentBg ? (
-          <div
-            className="relative mx-auto w-full max-w-sm aspect-[5/6]"
-            style={{ filter: 'drop-shadow(0 24px 32px rgba(0,0,0,0.12))' }}
-          >
-            <Image
-              src={imageUrl}
-              alt={name}
-              fill
-              sizes="(max-width: 1024px) 80vw, 40vw"
-              className="object-contain"
-              priority
-            />
-          </div>
-        ) : (
-          <div className="relative mx-auto w-full max-w-sm aspect-[5/6] overflow-hidden rounded-2xl">
-            <Image
-              src={imageUrl}
-              alt={name}
-              fill
-              sizes="(max-width: 1024px) 80vw, 40vw"
-              className="object-cover"
-              priority
-            />
-          </div>
-        )}
+        <div className="flex flex-col items-center gap-3">
+          {transparentBg ? (
+            <div
+              className="relative w-full max-w-sm aspect-[5/6]"
+              style={{ filter: 'drop-shadow(0 24px 32px rgba(0,0,0,0.12))' }}
+            >
+              <Image
+                src={currentImageUrl}
+                alt={`${name}${selectedColor ? ` in ${selectedColor.name}` : ''}, ${selectedSide} view`}
+                fill
+                sizes="(max-width: 1024px) 80vw, 40vw"
+                className="object-contain"
+                priority
+              />
+            </div>
+          ) : (
+            <div className="relative w-full max-w-sm aspect-[5/6] overflow-hidden rounded-2xl">
+              <Image
+                src={currentImageUrl}
+                alt={`${name}${selectedColor ? ` in ${selectedColor.name}` : ''}`}
+                fill
+                sizes="(max-width: 1024px) 80vw, 40vw"
+                className="object-cover"
+                priority
+              />
+            </div>
+          )}
+
+          {productHasSides && (
+            <div className="flex gap-2" role="group" aria-label="Select view">
+              {['front', 'back'].map((side) => (
+                <button
+                  key={side}
+                  onClick={() => setSelectedSide(side)}
+                  aria-pressed={selectedSide === side}
+                  className={`rounded-full px-4 py-2 text-xs font-medium capitalize transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none ${
+                    selectedSide === side
+                      ? 'bg-neutral-800 text-white'
+                      : 'bg-neutral-100 text-ink hover:bg-neutral-200'
+                  }`}
+                >
+                  {side}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
@@ -249,7 +275,13 @@ export default function ProductDetailClient({ product, relatedProducts }) {
               Upload a photo of your tea and place it on the product. Download your preview when you&apos;re happy with it.
             </p>
           </div>
-          <MockupEditor shirtImageUrl={imageUrl} onAddToCart={handleAddToCart} added={added} />
+          <MockupEditor
+            product={product}
+            selectedSide={selectedSide}
+            shirtImageUrl={currentImageUrl}
+            onAddToCart={handleAddToCart}
+            added={added}
+          />
         </div>
       </div>
 

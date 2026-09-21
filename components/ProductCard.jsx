@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { getDefaultImage } from '@/lib/productImages'
 
 export default function ProductCard({ product, index }) {
-  const { slug, name, category, priceInCents, imageUrl, transparentBg } = product
+  const { slug, name, category, priceInCents, transparentBg } = product
+  const imageUrl = getDefaultImage(product)
 
   const formattedPrice = (priceInCents / 100).toLocaleString('en-GB', {
     style: 'currency',

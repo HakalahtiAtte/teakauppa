@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCartStore } from '@/store/cartStore'
+import { getProductImage } from '@/lib/productImages'
 
 export default function CartPage() {
   const items = useCartStore((state) => state.items)
@@ -99,7 +100,7 @@ export default function CartPage() {
             <div className="flex items-start gap-4 flex-1 min-w-0">
               <div className="relative w-20 h-24 shrink-0">
                 <Image
-                  src={item.product.imageUrl}
+                  src={getProductImage(item.product, item.color?.name, 'front')}
                   alt={item.product.name}
                   fill
                   sizes="80px"

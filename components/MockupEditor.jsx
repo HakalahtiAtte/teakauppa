@@ -7,9 +7,40 @@ import imageCompression from 'browser-image-compression'
 const CANVAS_WIDTH = 480
 const CANVAS_HEIGHT = 560
 
-// Measured from pixel scan of shirtwhite.png — shirt content bounds as
-// a fraction of the full 1200x1200 image (excludes transparent padding)
-const SHIRT_CONTENT = { left: 0.098, top: 0.018, right: 0.901, bottom: 0.971 }
+// Print area configs per product type and side.
+// content: product body bounds within the image (fractions of rendered dimensions)
+// front/back: print area as centre (cx, cy) + size (w, h), all as fractions of content bounds.
+// These need visual calibration against the actual photos — adjust cx/cy/w/h to fit.
+// cx/cy are the fractional position of the print area CENTRE within the content bounds.
+// w/h are the fractional size of the print area relative to content bounds.
+const PRINT_CONFIGS = {
+  tshirt: {
+    content: { left: 0.098, top: 0.018, right: 0.901, bottom: 0.971 },
+    front: { cx: 0.50,  cy: 0.33,  w: 0.38, h: 0.26 },
+    back:  { cx: 0.50,  cy: 0.25,  w: 0.38, h: 0.26 },
+  },
+  hoodie: {
+    content: { left: 0.10,  top: 0.03,  right: 0.90,  bottom: 0.97  },
+    front: { cx: 0.50,  cy: 0.35,  w: 0.32, h: 0.22 },
+    back:  { cx: 0.50,  cy: 0.26,  w: 0.32, h: 0.22 },
+  },
+  tote: {
+    content: { left: 0.08,  top: 0.04,  right: 0.92,  bottom: 0.93  },
+    front: { cx: 0.50,  cy: 0.75,  w: 0.55, h: 0.40 },
+  },
+  mug: {
+    content: { left: 0.05,  top: 0.10,  right: 0.95,  bottom: 0.90  },
+    front: { cx: 0.42,  cy: 0.45,  w: 0.38, h: 0.32 },
+  },
+  socks: {
+    content: { left: 0.18,  top: 0.03,  right: 0.82,  bottom: 0.97  },
+    front: { cx: 0.675, cy: 0.27,  w: 0.20, h: 0.20 },
+  },
+  beanie: {
+    content: { left: 0.12,  top: 0.04,  right: 0.88,  bottom: 0.88  },
+    front: { cx: 0.50,  cy: 0.65,  w: 0.55, h: 0.28 },
+  },
+}
 
 function loadNativeImage(src) {
   return new Promise((resolve, reject) => {
@@ -21,11 +52,47 @@ function loadNativeImage(src) {
   })
 }
 
-export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
+function computeLayout(htmlImg, type, side) {
+  const config = PRINT_CONFIGS[type] ?? PRINT_CONFIGS.tshirt
+  const content = config.content
+  const sideConfig = config[side] ?? config.front
+
+  const naturalW = htmlImg.naturalWidth
+  const naturalH = htmlImg.naturalHeight
+  const imgScale = Math.min(CANVAS_WIDTH / naturalW, CANVAS_HEIGHT / naturalH)
+  const renderedW = naturalW * imgScale
+  const renderedH = naturalH * imgScale
+  const imgLeft = (CANVAS_WIDTH - renderedW) / 2
+  const imgTop = (CANVAS_HEIGHT - renderedH) / 2
+
+  const contentLeft = imgLeft + renderedW * content.left
+  const contentTop = imgTop + renderedH * content.top
+  const contentW = renderedW * (content.right - content.left)
+  const contentH = renderedH * (content.bottom - content.top)
+
+  const printW = contentW * sideConfig.w
+  const printH = contentH * sideConfig.h
+  const printLeft = contentLeft + contentW * sideConfig.cx - printW / 2
+  const printTop = contentTop + contentH * sideConfig.cy - printH / 2
+
+  return {
+    imgScale,
+    imgLeft,
+    imgTop,
+    printArea: { left: printLeft, top: printTop, width: printW, height: printH },
+  }
+}
+
+export default function MockupEditor({ product, selectedSide = 'front', shirtImageUrl, onAddToCart, added }) {
   const canvasElRef = useRef(null)
   const fabricRef = useRef(null)
   const printAreaRef = useRef(null)
   const disposedRef = useRef(false)
+  const guideRef = useRef(null)
+  const artworkStateRef = useRef({ front: null, back: null })
+  const prevSideRef = useRef(selectedSide)
+  const isFirstSwap = useRef(true)
+
   const [isReady, setIsReady] = useState(false)
   const [hasTeaImage, setHasTeaImage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -33,8 +100,10 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
   const outerRef = useRef(null)
   const [displayScale, setDisplayScale] = useState(1)
 
+  // Init once: create canvas and load the first shirt image
   useEffect(() => {
     disposedRef.current = false
+    isFirstSwap.current = true
 
     const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
     const canvas = new fabric.Canvas(canvasElRef.current, {
@@ -49,56 +118,30 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
       .then((htmlImg) => {
         if (disposedRef.current) return
 
-        const naturalW = htmlImg.naturalWidth
-        const naturalH = htmlImg.naturalHeight
-        const scale = Math.min(CANVAS_WIDTH / naturalW, CANVAS_HEIGHT / naturalH)
-
-        const renderedW = naturalW * scale
-        const renderedH = naturalH * scale
-        const imgLeft = (CANVAS_WIDTH - renderedW) / 2
-        const imgTop = (CANVAS_HEIGHT - renderedH) / 2
+        const { imgScale, imgLeft, imgTop, printArea } = computeLayout(htmlImg, product.type, selectedSide)
+        printAreaRef.current = printArea
 
         const fabricImg = new fabric.FabricImage(htmlImg)
+        fabricImg._isShirt = true
         fabricImg.set({
-          originX: 'left',
-          originY: 'top',
-          left: imgLeft,
-          top: imgTop,
-          scaleX: scale,
-          scaleY: scale,
-          selectable: false,
-          evented: false,
-          hoverCursor: 'default',
+          originX: 'left', originY: 'top',
+          left: imgLeft, top: imgTop,
+          scaleX: imgScale, scaleY: imgScale,
+          selectable: false, evented: false, hoverCursor: 'default',
         })
         canvas.add(fabricImg)
 
-        const contentLeft = imgLeft + renderedW * SHIRT_CONTENT.left
-        const contentTop = imgTop + renderedH * SHIRT_CONTENT.top
-        const contentW = renderedW * (SHIRT_CONTENT.right - SHIRT_CONTENT.left)
-        const contentH = renderedH * (SHIRT_CONTENT.bottom - SHIRT_CONTENT.top)
-
-        const printW = contentW * 0.38
-        const printH = contentH * 0.26
-        const printLeft = contentLeft + (contentW - printW) / 1.25
-        const printTop = contentTop + contentH * 0.33
-
-        const printArea = { left: printLeft, top: printTop, width: printW, height: printH }
-        printAreaRef.current = printArea
-
         const guide = new fabric.Rect({
-          left: printArea.left,
-          top: printArea.top,
-          width: printArea.width,
-          height: printArea.height,
+          left: printArea.left, top: printArea.top,
+          originX: 'left', originY: 'top',
+          width: printArea.width, height: printArea.height,
           fill: 'transparent',
-          stroke: '#8B5E3C',
-          strokeWidth: 1.5,
+          stroke: '#8B5E3C', strokeWidth: 1.5,
           strokeDashArray: [6, 4],
-          selectable: false,
-          evented: false,
-          opacity: 0.8,
+          selectable: false, evented: false, opacity: 0.8,
         })
         guide._isGuide = true
+        guideRef.current = guide
         canvas.add(guide)
 
         canvas.renderAll()
@@ -110,10 +153,81 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
 
     return () => {
       disposedRef.current = true
+      isFirstSwap.current = true
       canvas.dispose()
     }
-  }, [shirtImageUrl])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Swap: runs when colour or side changes after init — preserves artwork
+  useEffect(() => {
+    if (!isReady || !fabricRef.current) return
+
+    if (isFirstSwap.current) {
+      isFirstSwap.current = false
+      prevSideRef.current = selectedSide
+      return
+    }
+
+    const canvas = fabricRef.current
+    const sideChanged = prevSideRef.current !== selectedSide
+    const prevSide = prevSideRef.current
+    prevSideRef.current = selectedSide
+
+    async function doSwap() {
+      try {
+        if (sideChanged) {
+          const teaObj = canvas.getObjects().find((o) => o._isTea)
+          artworkStateRef.current[prevSide] = teaObj || null
+          if (teaObj) canvas.remove(teaObj)
+        }
+
+        const oldShirt = canvas.getObjects().find((o) => o._isShirt)
+        if (oldShirt) canvas.remove(oldShirt)
+
+        const htmlImg = await loadNativeImage(shirtImageUrl)
+        if (disposedRef.current) return
+
+        const { imgScale, imgLeft, imgTop, printArea } = computeLayout(htmlImg, product.type, selectedSide)
+        printAreaRef.current = printArea
+
+        const fabricImg = new fabric.FabricImage(htmlImg)
+        fabricImg._isShirt = true
+        fabricImg.set({
+          originX: 'left', originY: 'top',
+          left: imgLeft, top: imgTop,
+          scaleX: imgScale, scaleY: imgScale,
+          selectable: false, evented: false, hoverCursor: 'default',
+        })
+        canvas.add(fabricImg)
+        canvas.sendObjectToBack(fabricImg)
+
+        if (guideRef.current) {
+          guideRef.current.set({
+            left: printArea.left, top: printArea.top,
+            width: printArea.width, height: printArea.height,
+          })
+        }
+
+        if (sideChanged) {
+          const savedArtwork = artworkStateRef.current[selectedSide]
+          if (savedArtwork) {
+            canvas.add(savedArtwork)
+            canvas.bringObjectToFront(savedArtwork)
+            setHasTeaImage(true)
+          } else {
+            setHasTeaImage(false)
+          }
+        }
+
+        canvas.renderAll()
+      } catch {
+        if (!disposedRef.current) setError('Could not load the product image.')
+      }
+    }
+    doSwap()
+  }, [isReady, shirtImageUrl, selectedSide]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Responsive resize
   useEffect(() => {
     const el = outerRef.current
     if (!el) return
@@ -133,7 +247,7 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
     })
     canvas.setZoom(displayScale)
     canvas.renderAll()
-  }, [displayScale, shirtImageUrl])
+  }, [displayScale])
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files?.[0]
@@ -276,6 +390,7 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
       canvas.discardActiveObject()
       canvas.renderAll()
       setHasTeaImage(false)
+      artworkStateRef.current[selectedSide] = null
     }
   }
 
