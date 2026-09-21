@@ -25,8 +25,8 @@ const STEPS = [
   },
   {
     step: '03',
-    title: 'Download & order',
-    description: 'Save your preview, add the product to your cart, and check out. Your tea goes where you go.',
+    title: 'Preview & order',
+    description: 'Save your mockup as a keepsake, add the base product to your cart, and check out.',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M12 3v13.5m0 0l-4.5-4.5M12 16.5l4.5-4.5" />
@@ -40,7 +40,7 @@ export default function HowItWorks() {
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="mb-12 text-center">
         <h2
-          className="text-3xl font-bold text-[#111111] sm:text-4xl"
+          className="text-3xl font-bold text-ink sm:text-4xl"
           style={{ fontFamily: 'var(--font-playfair)' }}
         >
           How it works
@@ -58,13 +58,13 @@ export default function HowItWorks() {
             className="flex flex-col gap-4"
           >
             <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold tracking-widest text-[#8B5E3C]">{item.step}</span>
+              <span className="text-xs font-semibold tracking-widest text-brand-text">{item.step}</span>
               <div className="h-px flex-1 bg-neutral-100" />
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#8B5E3C]/10 text-[#8B5E3C]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10 text-brand-text">
               {item.icon}
             </div>
-            <h3 className="text-lg font-semibold text-[#111111]">{item.title}</h3>
+            <h3 className="text-lg font-semibold text-ink">{item.title}</h3>
             <p className="text-sm leading-relaxed text-neutral-500">{item.description}</p>
           </motion.div>
         ))}

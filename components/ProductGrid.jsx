@@ -1,17 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { getProducts, getFeaturedProducts } from '@/lib/products'
 import ProductCard from './ProductCard'
-import ProductSkeleton from './ProductSkeleton'
 
 export default function ProductGrid({ featured = false, filter = 'All', sort = 'default' }) {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const allProducts = featured ? getFeaturedProducts() : getProducts()
 
   const filtered =
@@ -25,14 +17,10 @@ export default function ProductGrid({ featured = false, filter = 'All', sort = '
     return 0
   })
 
-  const skeletonCount = featured ? 3 : 6
-
-  if (!mounted) {
+  if (sorted.length === 0) {
     return (
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-        {Array.from({ length: skeletonCount }).map((_, i) => (
-          <ProductSkeleton key={i} />
-        ))}
+      <div className="py-16 text-center">
+        <p className="text-neutral-500">No products match this filter.</p>
       </div>
     )
   }

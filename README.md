@@ -13,7 +13,7 @@ A full-stack e-commerce portfolio project built with Next.js 16. Browse and purc
 - **Persistent cart** — variant-aware (product × size × colour), survives page refresh (Zustand + localStorage)
 - **Scroll animations** — Framer Motion entrance animations on product cards and section headings
 - **SEO** — per-product `generateMetadata`, OpenGraph, Twitter cards, JSON-LD structured data, auto-generated sitemap and robots.txt
-- **Accessibility** — ARIA roles, keyboard navigation, live regions, focus management — no UI component library
+- **Accessibility** — ARIA roles, keyboard navigation (Escape closes menus and modals), live regions, focus management — no UI component library
 
 ---
 
@@ -35,7 +35,7 @@ A full-stack e-commerce portfolio project built with Next.js 16. Browse and purc
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js ≥20.9.0
 - A [Stripe](https://stripe.com) account (free, test mode is fine)
 
 ### 1. Clone and install

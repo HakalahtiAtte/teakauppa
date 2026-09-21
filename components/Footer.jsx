@@ -4,14 +4,14 @@ export default function Footer({ playfairClass }) {
   return (
     <footer className="w-full py-12 px-4 mt-24 border-t border-neutral-100">
       <div className="mx-auto max-w-6xl flex flex-col items-center gap-4 text-center">
-        <span className={`${playfairClass} text-lg font-semibold text-[#111111]`}>
+        <span className={`${playfairClass} text-lg font-semibold text-ink`}>
           Tea-shirts
         </span>
         <p className="text-sm text-neutral-500">A portfolio project</p>
         <div className="flex items-center gap-6">
           <Link
             href="https://github.com/HakalahtiAtte/teakauppa"
-            className="text-sm text-neutral-500 hover:text-[#8B5E3C] transition-colors duration-200"
+            className="text-sm text-neutral-500 hover:text-brand-text transition-colors duration-200"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub repository (opens in new tab)"
@@ -20,7 +20,7 @@ export default function Footer({ playfairClass }) {
           </Link>
           <Link
             href="https://nextjs.org"
-            className="text-sm text-neutral-500 hover:text-[#8B5E3C] transition-colors duration-200"
+            className="text-sm text-neutral-500 hover:text-brand-text transition-colors duration-200"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Built with Next.js (opens in new tab)"

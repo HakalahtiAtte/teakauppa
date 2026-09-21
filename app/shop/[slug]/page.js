@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getProductBySlug, getProducts, getRelatedProducts } from '@/lib/products'
+import { SITE_URL } from '@/lib/site'
 import ProductDetailClient from './ProductDetailClient'
-
-const BASE_URL = 'https://teakauppa.vercel.app'
 
 export async function generateStaticParams() {
   const products = getProducts()
@@ -17,7 +16,7 @@ export async function generateMetadata({ params }) {
   const price = (product.priceInCents / 100).toFixed(2)
   const imageForMeta = product.imageUrl.startsWith('http')
     ? product.imageUrl
-    : `${BASE_URL}${product.imageUrl}`
+    : `${SITE_URL}${product.imageUrl}`
 
   return {
     title: product.name,
@@ -25,7 +24,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: product.name,
       description: product.description,
-      url: `${BASE_URL}/shop/${product.slug}`,
+      url: `${SITE_URL}/shop/${product.slug}`,
       type: 'website',
       images: [
         {
@@ -52,7 +51,7 @@ function ProductJsonLd({ product }) {
   const price = (product.priceInCents / 100).toFixed(2)
   const imageForSchema = product.imageUrl.startsWith('http')
     ? product.imageUrl
-    : `${BASE_URL}${product.imageUrl}`
+    : `${SITE_URL}${product.imageUrl}`
 
   const schema = {
     '@context': 'https://schema.org',
@@ -65,14 +64,17 @@ function ProductJsonLd({ product }) {
       price,
       priceCurrency: 'EUR',
       availability: 'https://schema.org/InStock',
-      url: `${BASE_URL}/shop/${product.slug}`,
+      url: `${SITE_URL}/shop/${product.slug}`,
     },
   }
+
+  // Escape < to prevent </script> injection in product strings
+  const safeJson = JSON.stringify(schema).replace(/</g, '\\u003c')
 
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeJson }}
     />
   )
 }

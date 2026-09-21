@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, index }) {
   const { slug, name, category, priceInCents, imageUrl, transparentBg } = product
 
   const formattedPrice = (priceInCents / 100).toLocaleString('en-GB', {
@@ -17,7 +17,7 @@ export default function ProductCard({ product }) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.4, delay: index !== undefined ? index * 0.08 : 0 }}
     >
       <Link
         href={`/shop/${slug}`}
@@ -50,10 +50,10 @@ export default function ProductCard({ product }) {
         )}
 
         <div className="flex flex-col items-center gap-1 text-center">
-          <span className="text-xs font-medium tracking-widest uppercase text-[#8B5E3C]">
+          <span className="text-xs font-medium tracking-widest uppercase text-brand-text">
             {category}
           </span>
-          <h3 className="font-semibold text-sm sm:text-lg text-[#111111] group-hover:text-[#8B5E3C] transition-colors duration-200 leading-snug">
+          <h3 className="font-semibold text-sm sm:text-lg text-ink group-hover:text-brand-text transition-colors duration-200 leading-snug">
             {name}
           </h3>
           <p className="text-sm text-neutral-500">{formattedPrice}</p>

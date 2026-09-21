@@ -65,9 +65,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
       return
     }
     setSizeError(false)
-    for (let i = 0; i < qty; i++) {
-      addItem(product, selectedSize ?? '', selectedColor)
-    }
+    addItem(product, selectedSize ?? '', selectedColor, qty)
     setAdded(true)
     setToastVisible(true)
     clearTimeout(timerRef.current)
@@ -86,7 +84,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <Link
         href="/shop"
-        className="mb-10 inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-[#8B5E3C] transition-colors duration-200"
+        className="mb-10 inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-brand-text transition-colors duration-200"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -124,24 +122,24 @@ export default function ProductDetailClient({ product, relatedProducts }) {
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <span className="text-xs font-medium tracking-widest uppercase text-[#8B5E3C]">
+            <span className="text-xs font-medium tracking-widest uppercase text-brand-text">
               {category}
             </span>
             <h1
-              className="text-4xl font-bold text-[#111111] sm:text-5xl"
+              className="text-4xl font-bold text-ink sm:text-5xl"
               style={{ fontFamily: 'var(--font-playfair)' }}
             >
               {name}
             </h1>
-            <p className="text-2xl font-semibold text-[#111111]">{formattedPrice}</p>
+            <p className="text-2xl font-semibold text-ink">{formattedPrice}</p>
           </div>
 
           <p className="text-base leading-relaxed text-neutral-500">{description}</p>
 
           {hasColors && (
             <div className="flex flex-col gap-3">
-              <p className="text-sm font-semibold text-[#111111]">
-                Colour{selectedColor && <span className="font-normal text-[#8B5E3C]"> — {selectedColor.name}</span>}
+              <p className="text-sm font-semibold text-ink">
+                Colour{selectedColor && <span className="font-normal text-brand-text"> — {selectedColor.name}</span>}
               </p>
               <div className="flex flex-wrap gap-2" role="group" aria-label="Select colour">
                 {colors.map((color) => (
@@ -151,9 +149,9 @@ export default function ProductDetailClient({ product, relatedProducts }) {
                     title={color.name}
                     aria-label={`Colour: ${color.name}`}
                     aria-pressed={selectedColor?.name === color.name}
-                    className={`w-8 h-8 rounded-full border-2 transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none ${
+                    className={`w-10 h-10 rounded-full border-2 transition-all duration-150 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none ${
                       selectedColor?.name === color.name
-                        ? 'border-[#8B5E3C] scale-110'
+                        ? 'border-brand scale-110'
                         : 'border-transparent hover:border-neutral-300'
                     }`}
                     style={{ backgroundColor: color.hex }}
@@ -166,13 +164,13 @@ export default function ProductDetailClient({ product, relatedProducts }) {
           {hasMultipleSizes && (
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
-                <p className="text-sm font-semibold text-[#111111]" id="size-label">
-                  Size{selectedSize && <span className="font-normal text-[#8B5E3C]"> — {selectedSize}</span>}
+                <p className="text-sm font-semibold text-ink" id="size-label">
+                  Size{selectedSize && <span className="font-normal text-brand-text"> — {selectedSize}</span>}
                 </p>
                 {TYPES_WITH_GUIDE.includes(type) && (
                   <button
                     onClick={() => setShowSizeGuide(true)}
-                    className="text-xs text-neutral-400 underline underline-offset-2 hover:text-[#8B5E3C] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8B5E3C] rounded"
+                    className="text-xs text-neutral-400 underline underline-offset-2 hover:text-brand-text transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded"
                   >
                     Size guide
                   </button>
@@ -184,10 +182,10 @@ export default function ProductDetailClient({ product, relatedProducts }) {
                     key={size}
                     onClick={() => handleSizeChange(size)}
                     aria-pressed={selectedSize === size}
-                    className={`rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none ${
+                    className={`rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none ${
                       selectedSize === size
-                        ? 'bg-[#111111] text-white'
-                        : 'bg-neutral-100 text-[#111111] hover:bg-neutral-200'
+                        ? 'bg-neutral-800 text-white'
+                        : 'bg-neutral-100 text-ink hover:bg-neutral-200'
                     }`}
                   >
                     {size}
@@ -201,22 +199,22 @@ export default function ProductDetailClient({ product, relatedProducts }) {
           )}
 
           <div className="flex flex-col gap-3">
-            <p className="text-sm font-semibold text-[#111111]">Quantity</p>
+            <p className="text-sm font-semibold text-ink">Quantity</p>
             <div className="flex items-center gap-3" role="group" aria-label="Quantity">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 disabled={qty <= 1}
                 aria-label="Decrease quantity"
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-neutral-100 text-[#111111] hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none"
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-neutral-100 text-ink hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
               >
                 −
               </button>
-              <span className="w-8 text-center font-semibold text-[#111111]" aria-live="polite">{qty}</span>
+              <span className="w-8 text-center font-semibold text-ink" aria-live="polite">{qty}</span>
               <button
                 onClick={() => setQty((q) => Math.min(10, q + 1))}
                 disabled={qty >= 10}
                 aria-label="Increase quantity"
-                className="flex items-center justify-center w-9 h-9 rounded-full bg-neutral-100 text-[#111111] hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none"
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-neutral-100 text-ink hover:bg-neutral-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
               >
                 +
               </button>
@@ -231,7 +229,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
                 ? 'Select a size to add to cart'
                 : `Add ${name} to cart`
             }
-            className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-[#8B5E3C] px-8 py-4 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none sm:w-auto"
+            className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-brand px-8 py-4 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none sm:w-auto"
           >
             {added ? 'Added to cart!' : 'Add to Cart'}
           </button>
@@ -242,7 +240,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
         <div className="rounded-2xl bg-neutral-50 border border-neutral-100 p-8 sm:p-12">
           <div className="mb-8 text-center">
             <h2
-              className="mb-3 text-2xl font-bold text-[#111111] sm:text-3xl"
+              className="mb-3 text-2xl font-bold text-ink sm:text-3xl"
               style={{ fontFamily: 'var(--font-playfair)' }}
             >
               Customize with your tea

@@ -18,7 +18,8 @@ export async function GET(req) {
     }
 
     return Response.json({
-      customer_details: session.customer_details,
+      customerName: session.customer_details?.name ?? null,
+      customerEmail: session.customer_details?.email ?? null,
       amount_total: session.amount_total,
       currency: session.currency,
       payment_status: session.payment_status,

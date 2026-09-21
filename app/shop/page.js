@@ -34,7 +34,7 @@ export default function ShopPage() {
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-10 flex flex-col gap-1">
         <h1
-          className="text-4xl font-bold text-[#111111] sm:text-5xl"
+          className="text-4xl font-bold text-ink sm:text-5xl"
           style={{ fontFamily: 'var(--font-playfair)' }}
         >
           {HEADING[activeFilter]}
@@ -53,10 +53,10 @@ export default function ShopPage() {
               key={filter}
               onClick={() => setActiveFilter(filter)}
               aria-pressed={activeFilter === filter}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none ${
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none ${
                 activeFilter === filter
-                  ? 'bg-[#8B5E3C] text-white'
-                  : 'bg-neutral-100 text-[#111111] hover:bg-neutral-200'
+                  ? 'bg-brand text-white'
+                  : 'bg-neutral-100 text-ink hover:bg-neutral-200'
               }`}
             >
               {filter}
@@ -69,7 +69,7 @@ export default function ShopPage() {
           <select
             value={activeSort}
             onChange={(e) => setActiveSort(e.target.value)}
-            className="rounded-full border border-neutral-200 bg-white px-3 py-2 text-sm text-[#111111] focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] cursor-pointer"
+            className="rounded-full border border-neutral-200 bg-surface px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand cursor-pointer"
           >
             {SORTS.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>

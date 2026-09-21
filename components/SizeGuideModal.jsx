@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const guides = {
@@ -48,8 +48,18 @@ const guides = {
   },
 }
 
+const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+
 export default function SizeGuideModal({ type, onClose }) {
   const guide = guides[type] ?? guides.tshirt
+  const modalRef = useRef(null)
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement
+    const focusable = modalRef.current?.querySelectorAll(FOCUSABLE)
+    if (focusable?.length) focusable[0].focus()
+    return () => previouslyFocused?.focus()
+  }, [])
 
   useEffect(() => {
     function handleKey(e) {
@@ -58,6 +68,21 @@ export default function SizeGuideModal({ type, onClose }) {
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
   }, [onClose])
+
+  function handleTabTrap(e) {
+    if (e.key !== 'Tab') return
+    const focusable = Array.from(modalRef.current?.querySelectorAll(FOCUSABLE) ?? [])
+    if (!focusable.length) return
+    const first = focusable[0]
+    const last = focusable[focusable.length - 1]
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -73,7 +98,8 @@ export default function SizeGuideModal({ type, onClose }) {
           aria-hidden="true"
         />
         <motion.div
-          className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-8 shadow-xl"
+          ref={modalRef}
+          className="relative w-full max-w-md rounded-2xl bg-surface p-6 sm:p-8 shadow-xl"
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 40, opacity: 0 }}
@@ -81,12 +107,13 @@ export default function SizeGuideModal({ type, onClose }) {
           role="dialog"
           aria-modal="true"
           aria-label={guide.label}
+          onKeyDown={handleTabTrap}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-[#111111]">{guide.label}</h2>
+            <h2 className="text-lg font-semibold text-ink">{guide.label}</h2>
             <button
               onClick={onClose}
-              className="flex items-center justify-center w-8 h-8 rounded-full text-neutral-400 hover:text-[#111111] hover:bg-neutral-100 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none"
+              className="flex items-center justify-center w-8 h-8 rounded-full text-neutral-400 hover:text-ink hover:bg-neutral-100 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
               aria-label="Close size guide"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8} aria-hidden="true">
@@ -110,7 +137,7 @@ export default function SizeGuideModal({ type, onClose }) {
                 {guide.rows.map((row) => (
                   <tr key={row[0]} className="border-b border-neutral-50 last:border-0">
                     {row.map((cell, i) => (
-                      <td key={i} className={`py-3 pr-4 last:pr-0 ${i === 0 ? 'font-semibold text-[#111111]' : 'text-neutral-500'}`}>
+                      <td key={i} className={`py-3 pr-4 last:pr-0 ${i === 0 ? 'font-semibold text-ink' : 'text-neutral-500'}`}>
                         {cell}
                       </td>
                     ))}

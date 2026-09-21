@@ -14,6 +14,7 @@ const SHIRT_CONTENT = { left: 0.098, top: 0.018, right: 0.901, bottom: 0.971 }
 function loadNativeImage(src) {
   return new Promise((resolve, reject) => {
     const img = new window.Image()
+    img.crossOrigin = 'anonymous'
     img.onload = () => resolve(img)
     img.onerror = reject
     img.src = src
@@ -24,82 +25,115 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
   const canvasElRef = useRef(null)
   const fabricRef = useRef(null)
   const printAreaRef = useRef(null)
+  const disposedRef = useRef(false)
   const [isReady, setIsReady] = useState(false)
   const [hasTeaImage, setHasTeaImage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
+  const outerRef = useRef(null)
+  const [displayScale, setDisplayScale] = useState(1)
 
   useEffect(() => {
+    disposedRef.current = false
+
+    const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
     const canvas = new fabric.Canvas(canvasElRef.current, {
       width: CANVAS_WIDTH,
       height: CANVAS_HEIGHT,
-      backgroundColor: '#f9f9f9',
+      backgroundColor: prefersDark ? '#231F1D' : '#f9f9f9',
       selection: false,
     })
     fabricRef.current = canvas
 
-    loadNativeImage(shirtImageUrl).then((htmlImg) => {
-      const naturalW = htmlImg.naturalWidth
-      const naturalH = htmlImg.naturalHeight
-      const scale = Math.min(CANVAS_WIDTH / naturalW, CANVAS_HEIGHT / naturalH)
+    loadNativeImage(shirtImageUrl)
+      .then((htmlImg) => {
+        if (disposedRef.current) return
 
-      const renderedW = naturalW * scale
-      const renderedH = naturalH * scale
-      const imgLeft = (CANVAS_WIDTH - renderedW) / 2
-      const imgTop = (CANVAS_HEIGHT - renderedH) / 2
+        const naturalW = htmlImg.naturalWidth
+        const naturalH = htmlImg.naturalHeight
+        const scale = Math.min(CANVAS_WIDTH / naturalW, CANVAS_HEIGHT / naturalH)
 
-      const fabricImg = new fabric.FabricImage(htmlImg)
-      fabricImg.set({
-        originX: 'left',
-        originY: 'top',
-        left: imgLeft,
-        top: imgTop,
-        scaleX: scale,
-        scaleY: scale,
-        selectable: false,
-        evented: false,
-        hoverCursor: 'default',
+        const renderedW = naturalW * scale
+        const renderedH = naturalH * scale
+        const imgLeft = (CANVAS_WIDTH - renderedW) / 2
+        const imgTop = (CANVAS_HEIGHT - renderedH) / 2
+
+        const fabricImg = new fabric.FabricImage(htmlImg)
+        fabricImg.set({
+          originX: 'left',
+          originY: 'top',
+          left: imgLeft,
+          top: imgTop,
+          scaleX: scale,
+          scaleY: scale,
+          selectable: false,
+          evented: false,
+          hoverCursor: 'default',
+        })
+        canvas.add(fabricImg)
+
+        const contentLeft = imgLeft + renderedW * SHIRT_CONTENT.left
+        const contentTop = imgTop + renderedH * SHIRT_CONTENT.top
+        const contentW = renderedW * (SHIRT_CONTENT.right - SHIRT_CONTENT.left)
+        const contentH = renderedH * (SHIRT_CONTENT.bottom - SHIRT_CONTENT.top)
+
+        const printW = contentW * 0.38
+        const printH = contentH * 0.26
+        const printLeft = contentLeft + (contentW - printW) / 1.25
+        const printTop = contentTop + contentH * 0.33
+
+        const printArea = { left: printLeft, top: printTop, width: printW, height: printH }
+        printAreaRef.current = printArea
+
+        const guide = new fabric.Rect({
+          left: printArea.left,
+          top: printArea.top,
+          width: printArea.width,
+          height: printArea.height,
+          fill: 'transparent',
+          stroke: '#8B5E3C',
+          strokeWidth: 1.5,
+          strokeDashArray: [6, 4],
+          selectable: false,
+          evented: false,
+          opacity: 0.8,
+        })
+        guide._isGuide = true
+        canvas.add(guide)
+
+        canvas.renderAll()
+        setIsReady(true)
       })
-      canvas.add(fabricImg)
-
-      // Place guide relative to actual shirt content (not the transparent padding)
-      const contentLeft = imgLeft + renderedW * SHIRT_CONTENT.left
-      const contentTop = imgTop + renderedH * SHIRT_CONTENT.top
-      const contentW = renderedW * (SHIRT_CONTENT.right - SHIRT_CONTENT.left)
-      const contentH = renderedH * (SHIRT_CONTENT.bottom - SHIRT_CONTENT.top)
-
-      const printW = contentW * 0.38
-      const printH = contentH * 0.26
-      const printLeft = contentLeft + (contentW - printW) / 1.25
-      const printTop = contentTop + contentH * 0.33
-
-      const printArea = { left: printLeft, top: printTop, width: printW, height: printH }
-      printAreaRef.current = printArea
-
-      const guide = new fabric.Rect({
-        left: printArea.left,
-        top: printArea.top,
-        width: printArea.width,
-        height: printArea.height,
-        fill: 'transparent',
-        stroke: '#8B5E3C',
-        strokeWidth: 1.5,
-        strokeDashArray: [6, 4],
-        selectable: false,
-        evented: false,
-        opacity: 0.8,
+      .catch(() => {
+        if (!disposedRef.current) setError('Could not load the product image.')
       })
-      guide._isGuide = true
-      canvas.add(guide)
-
-      canvas.renderAll()
-      setIsReady(true)
-    })
 
     return () => {
+      disposedRef.current = true
       canvas.dispose()
     }
   }, [shirtImageUrl])
+
+  useEffect(() => {
+    const el = outerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      setDisplayScale(Math.min(1, entry.contentRect.width / CANVAS_WIDTH))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const canvas = fabricRef.current
+    if (!canvas) return
+    canvas.setDimensions({
+      width: CANVAS_WIDTH * displayScale,
+      height: CANVAS_HEIGHT * displayScale,
+    })
+    canvas.setZoom(displayScale)
+    canvas.renderAll()
+  }, [displayScale, shirtImageUrl])
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files?.[0]
@@ -118,6 +152,7 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
     setError(null)
     setIsLoading(true)
 
+    let objectUrl = null
     try {
       const compressed = await imageCompression(file, {
         maxSizeMB: 1,
@@ -125,7 +160,10 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
         useWebWorker: true,
       })
 
-      const objectUrl = URL.createObjectURL(compressed)
+      objectUrl = URL.createObjectURL(compressed)
+
+      if (disposedRef.current) return
+
       const canvas = fabricRef.current
       const printArea = printAreaRef.current
 
@@ -133,6 +171,9 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
       if (existing) canvas.remove(existing)
 
       const htmlImg = await loadNativeImage(objectUrl)
+
+      if (disposedRef.current) return
+
       const fabricImg = new fabric.FabricImage(htmlImg)
       fabricImg._isTea = true
 
@@ -164,10 +205,10 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
       canvas.renderAll()
 
       setHasTeaImage(true)
-      URL.revokeObjectURL(objectUrl)
     } catch {
-      setError('Something went wrong processing the image. Try again.')
+      if (!disposedRef.current) setError('Something went wrong processing the image. Try again.')
     } finally {
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
       setIsLoading(false)
       e.target.value = ''
     }
@@ -175,23 +216,56 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
 
   function handleDownload() {
     const canvas = fabricRef.current
+    if (!canvas) return
+    const dimensions = { width: canvas.getWidth(), height: canvas.getHeight() }
+    const viewport = [...canvas.viewportTransform]
 
     canvas.getObjects().forEach((o) => {
       if (o._isGuide) o.set('visible', false)
     })
     canvas.renderAll()
 
-    const dataUrl = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 2 })
+    try {
+      canvas.setDimensions({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT })
+      canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
+      const dataUrl = canvas.toDataURL({
+        format: 'png',
+        multiplier: 2,
+        enableRetinaScaling: false,
+      })
+      const link = document.createElement('a')
+      link.download = 'tea-shirt-preview.png'
+      link.href = dataUrl
+      link.click()
+    } catch {
+      setError('Could not export the image. Try again.')
+    } finally {
+      canvas.setDimensions(dimensions)
+      canvas.setViewportTransform(viewport)
+      canvas.getObjects().forEach((o) => {
+        if (o._isGuide) o.set('visible', true)
+      })
+      canvas.renderAll()
+    }
+  }
 
-    canvas.getObjects().forEach((o) => {
-      if (o._isGuide) o.set('visible', true)
-    })
+  function handleCanvasKeyDown(e) {
+    const canvas = fabricRef.current
+    if (!canvas) return
+    const obj = canvas.getActiveObject()
+    if (!obj) return
+
+    const delta = e.shiftKey ? 10 : 1
+    const moves = {
+      ArrowLeft: { left: obj.left - delta },
+      ArrowRight: { left: obj.left + delta },
+      ArrowUp: { top: obj.top - delta },
+      ArrowDown: { top: obj.top + delta },
+    }
+    if (!moves[e.key]) return
+    e.preventDefault()
+    obj.set(moves[e.key])
     canvas.renderAll()
-
-    const link = document.createElement('a')
-    link.download = 'tea-shirt-preview.png'
-    link.href = dataUrl
-    link.click()
   }
 
   function handleRemoveTea() {
@@ -206,13 +280,17 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div ref={outerRef} className="flex flex-col items-center gap-6 w-full">
       <div
-        className="relative rounded-2xl overflow-hidden"
+        className="relative rounded-2xl overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         style={{ filter: 'drop-shadow(0 12px 32px rgba(0,0,0,0.10))' }}
+        tabIndex={isReady ? 0 : undefined}
+        role={isReady ? 'application' : undefined}
+        aria-label={isReady ? 'Product customiser. Use arrow keys to move your image, Shift+Arrow to move faster.' : undefined}
+        onKeyDown={handleCanvasKeyDown}
       >
         <canvas ref={canvasElRef} />
-        {!isReady && (
+        {!isReady && !error && (
           <div
             className="absolute inset-0 flex items-center justify-center bg-neutral-100 rounded-2xl"
             aria-label="Loading editor"
@@ -226,11 +304,14 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
         <div className="flex flex-col items-center gap-4 w-full max-w-xs">
           <p className="text-xs text-neutral-500 text-center leading-relaxed">
             Position your image inside the dashed box — that&apos;s the print area.
-            Drag to move, use corner handles to resize.
+            Drag to move, use corner handles to resize, or focus the canvas and use arrow keys (Shift for larger steps).
+          </p>
+          <p className="text-xs text-neutral-400 text-center">
+            This editor creates a preview only — the base product is what gets ordered.
           </p>
 
           <label
-            className={`w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-dashed border-[#8B5E3C] px-6 py-3 text-sm font-medium text-[#8B5E3C] transition-colors duration-200 hover:bg-[#8B5E3C]/5 focus-within:ring-2 focus-within:ring-[#8B5E3C] focus-within:ring-offset-2 focus-within:outline-none ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
+            className={`w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-full border border-dashed border-brand px-6 py-3 text-sm font-medium text-brand-text transition-colors duration-200 hover:bg-brand/5 focus-within:ring-2 focus-within:ring-brand focus-within:ring-offset-2 focus-within:outline-none ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -269,7 +350,7 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
               <div className="flex gap-3 w-full">
                 <button
                   onClick={handleDownload}
-                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#8B5E3C] px-5 py-3 text-sm font-semibold text-[#8B5E3C] hover:bg-[#8B5E3C]/5 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
+                  className="flex-1 inline-flex items-center justify-center rounded-full border border-brand px-5 py-3 text-sm font-semibold text-brand-text hover:bg-brand/5 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
                   aria-label="Download shirt preview as PNG"
                 >
                   Download preview
@@ -285,8 +366,8 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
               {onAddToCart && (
                 <button
                   onClick={onAddToCart}
-                  className="w-full inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none"
-                  aria-label="Add customised product to cart"
+                  className="w-full inline-flex items-center justify-center rounded-full bg-brand px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
+                  aria-label="Add product to cart"
                 >
                   {added ? 'Added to cart!' : 'Add to cart'}
                 </button>
@@ -294,6 +375,10 @@ export default function MockupEditor({ shirtImageUrl, onAddToCart, added }) {
             </div>
           )}
         </div>
+      )}
+
+      {error && !isReady && (
+        <p className="text-sm text-red-500 text-center" role="alert">{error}</p>
       )}
     </div>
   )

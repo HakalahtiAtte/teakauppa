@@ -31,13 +31,13 @@ export default function StickyCartBar({
           animate={{ y: 0 }}
           exit={{ y: '100%' }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-100 shadow-lg"
+          className="fixed bottom-0 inset-x-0 z-40 bg-surface/95 backdrop-blur-md border-t border-neutral-100 shadow-lg"
         >
           <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6">
             <div className="flex items-center gap-3 sm:gap-6">
               <div className="hidden sm:flex flex-col min-w-0">
-                <span className="text-sm font-semibold text-[#111111] truncate">{product.name}</span>
-                <span className="text-sm text-[#8B5E3C]">{formattedPrice}</span>
+                <span className="text-sm font-semibold text-ink truncate">{product.name}</span>
+                <span className="text-sm text-brand-text">{formattedPrice}</span>
               </div>
 
               <div className="flex items-center gap-2 flex-1 overflow-x-auto">
@@ -50,9 +50,9 @@ export default function StickyCartBar({
                         title={color.name}
                         aria-label={`Colour: ${color.name}`}
                         aria-pressed={selectedColor?.name === color.name}
-                        className={`w-6 h-6 rounded-full border-2 transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none ${
+                        className={`w-8 h-8 rounded-full border-2 transition-all duration-150 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none ${
                           selectedColor?.name === color.name
-                            ? 'border-[#8B5E3C] scale-110'
+                            ? 'border-brand scale-110'
                             : 'border-transparent hover:border-neutral-300'
                         }`}
                         style={{ backgroundColor: color.hex }}
@@ -68,10 +68,10 @@ export default function StickyCartBar({
                         key={size}
                         onClick={() => onSizeChange(size)}
                         aria-pressed={selectedSize === size}
-                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:outline-none ${
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none ${
                           selectedSize === size
-                            ? 'bg-[#111111] text-white'
-                            : 'bg-neutral-100 text-[#111111] hover:bg-neutral-200'
+                            ? 'bg-neutral-800 text-white'
+                            : 'bg-neutral-100 text-ink hover:bg-neutral-200'
                         }`}
                       >
                         {size}
@@ -83,7 +83,7 @@ export default function StickyCartBar({
 
               <button
                 onClick={onAddToCart}
-                className="shrink-0 inline-flex items-center justify-center rounded-full bg-[#8B5E3C] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-[#8B5E3C] focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap"
+                className="shrink-0 inline-flex items-center justify-center rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none whitespace-nowrap"
               >
                 {added ? '✓ Added' : 'Add to Cart'}
               </button>

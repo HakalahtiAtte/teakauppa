@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import SuccessClient from './SuccessClient'
 
 export const metadata = {
-  title: 'Order confirmed — Tea-shirts',
+  title: 'Order confirmed',
 }
 
 export default function SuccessPage() {
