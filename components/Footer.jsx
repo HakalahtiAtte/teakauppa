@@ -1,11 +1,12 @@
 import Link from 'next/link'
+import { SITE_NAME } from '@/lib/site'
 
 export default function Footer({ playfairClass }) {
   return (
     <footer className="w-full py-12 px-4 mt-24 border-t border-neutral-100">
       <div className="mx-auto max-w-6xl flex flex-col items-center gap-4 text-center">
         <span className={`${playfairClass} text-lg font-semibold text-ink`}>
-          Tea-shirts
+          {SITE_NAME}
         </span>
         <p className="text-sm text-neutral-500">A portfolio project</p>
         <div className="flex items-center gap-6">

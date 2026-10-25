@@ -10,17 +10,17 @@ export default function HomePage() {
           className="max-w-2xl text-5xl font-bold leading-tight text-ink sm:text-6xl lg:text-7xl"
           style={{ fontFamily: 'var(--font-playfair)' }}
         >
-          Wear your obsession.
+          Keep it simple.
         </h1>
         <p className="mt-6 max-w-md text-lg text-neutral-500 sm:text-xl">
-          Premium tees for the tea-obsessed — and a few other things.
+          Plain clothing and everyday accessories. Five solid colours, your choice.
         </p>
         <Link
           href="/shop"
           className="mt-10 inline-flex items-center justify-center rounded-full bg-brand px-8 py-3 text-sm font-semibold text-white transition-opacity duration-200 hover:opacity-90 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
           aria-label="Browse the shop"
         >
-          Shop now
+          Shop plain essentials
         </Link>
       </section>
 
@@ -29,7 +29,7 @@ export default function HomePage() {
           className="mb-12 text-3xl font-bold text-ink sm:text-4xl"
           style={{ fontFamily: 'var(--font-playfair)' }}
         >
-          Our favourites
+          Plain essentials
         </h2>
         <ProductGrid featured />
       </section>
@@ -46,19 +46,19 @@ export default function HomePage() {
               className="text-3xl font-bold text-ink sm:text-4xl"
               style={{ fontFamily: 'var(--font-playfair)' }}
             >
-              Your tea. Your way.
+              Plain now. Original designs next.
             </h2>
             <p className="text-base leading-relaxed text-neutral-500 sm:text-lg">
-              Upload a photo of your tea — your morning cup, your favourite stash,
-              a perfectly-lit flat lay. Place it on any product, resize it, download
-              your preview. Every tea has a story; this is how you wear yours.
+              Start with simple clothing and accessories in solid colours.
+              We&apos;re working on a separate collection of designed shirts to sit
+              alongside these plain essentials.
             </p>
             <Link
               href="/shop"
               className="self-start inline-flex items-center justify-center rounded-full border border-brand px-8 py-3 text-sm font-semibold text-brand-text transition-colors duration-200 hover:bg-brand hover:text-white focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
-              aria-label="Try the customiser on any product"
+              aria-label="Explore the plain essentials collection"
             >
-              Try it on a product
+              Explore the collection
             </Link>
           </div>
 
@@ -74,16 +74,16 @@ export default function HomePage() {
                   strokeWidth={1.5}
                   aria-hidden="true"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m16 3 5 5-12 12-6 1 1-6L16 3Z M13 6l5 5" />
                 </svg>
               </div>
               <p
                 className="text-sm font-semibold text-ink tracking-wide uppercase"
                 style={{ fontFamily: 'var(--font-playfair)' }}
               >
-                Live on every product page
+                Original designs in progress
               </p>
-              <p className="text-xs text-neutral-500">Pick a product and try it</p>
+              <p className="text-xs text-neutral-500">A new collection is taking shape.</p>
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@ import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import MotionProvider from '@/components/MotionProvider'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '@/lib/site'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,21 +19,21 @@ const playfair = Playfair_Display({
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Tea-shirts',
-    template: '%s — Tea-shirts',
+    default: SITE_NAME,
+    template: `%s — ${SITE_NAME}`,
   },
-  description: 'Minimal t-shirts for tea lovers. Upload a photo of your tea and wear it.',
+  description: SITE_DESCRIPTION,
   openGraph: {
     type: 'website',
-    siteName: 'Tea-shirts',
-    title: 'Tea-shirts',
-    description: 'Minimal t-shirts for tea lovers. Upload a photo of your tea and wear it.',
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
     url: SITE_URL,
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tea-shirts',
-    description: 'Minimal t-shirts for tea lovers. Upload a photo of your tea and wear it.',
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
   },
   robots: {
     index: true,

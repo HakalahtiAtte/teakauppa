@@ -15,21 +15,23 @@ const STEPS = [
   },
   {
     step: '02',
-    title: 'Upload your tea',
-    description: 'Open the mockup editor on any product page. Drop in a photo of your favourite brew and position it exactly where you want.',
+    title: 'Choose your colour',
+    description: 'Find your favourite of five solid colours, then choose a size where available.',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+        <circle cx="8" cy="8" r="4" />
+        <circle cx="16" cy="8" r="4" />
+        <circle cx="12" cy="16" r="4" />
       </svg>
     ),
   },
   {
     step: '03',
-    title: 'Preview & order',
-    description: 'Save your mockup as a keepsake, add the base product to your cart, and check out.',
+    title: 'Make it an everyday essential',
+    description: 'Add your plain product to the cart and check out. All items in this collection come without printed designs.',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5} aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M12 3v13.5m0 0l-4.5-4.5M12 16.5l4.5-4.5" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4 4L19 6" />
       </svg>
     ),
   },
@@ -45,7 +47,7 @@ export default function HowItWorks() {
         >
           How it works
         </h2>
-        <p className="mt-4 text-neutral-500">From brew to wardrobe in three steps.</p>
+        <p className="mt-4 text-neutral-500">Find your everyday essentials in three steps.</p>
       </div>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {STEPS.map((item, i) => (

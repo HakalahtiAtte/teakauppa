@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { useCartStore } from '@/store/cartStore'
+import { SITE_NAME } from '@/lib/site'
 
 export default function Header({ playfairClass }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
@@ -31,9 +32,9 @@ export default function Header({ playfairClass }) {
         <Link
           href="/"
           className={`${playfairClass} text-xl font-bold text-ink hover:text-brand-text transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand rounded-sm`}
-          aria-label="Tea-shirts home"
+          aria-label={`${SITE_NAME} home`}
         >
-          Tea-shirts
+          {SITE_NAME}
         </Link>
 
         <nav className="hidden items-center gap-8 sm:flex" aria-label="Main navigation">
@@ -109,7 +110,7 @@ export default function Header({ playfairClass }) {
               className={`${playfairClass} text-xl font-bold text-ink`}
               onClick={() => setMobileNavOpen(false)}
             >
-              Tea-shirts
+              {SITE_NAME}
             </Link>
             <button
               className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-neutral-100 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"

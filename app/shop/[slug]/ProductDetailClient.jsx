@@ -42,6 +42,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
   const addItem = useCartStore((state) => state.addItem)
   const timerRef = useRef(null)
   const addToCartRef = useRef(null)
+  const sizeOptionsRef = useRef(null)
 
   useEffect(() => () => clearTimeout(timerRef.current), [])
 
@@ -67,6 +68,8 @@ export default function ProductDetailClient({ product, relatedProducts }) {
   const handleAddToCart = useCallback(() => {
     if (hasMultipleSizes && !selectedSize) {
       setSizeError(true)
+      sizeOptionsRef.current?.querySelector('button')?.focus()
+      sizeOptionsRef.current?.scrollIntoView({ block: 'center', behavior: 'instant' })
       return
     }
     setSizeError(false)
@@ -202,7 +205,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
                   </button>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="size-label">
+              <div ref={sizeOptionsRef} className="flex flex-wrap gap-2" role="group" aria-labelledby="size-label" aria-describedby={sizeError ? 'size-error' : undefined}>
                 {sizes.map((size) => (
                   <button
                     key={size}
@@ -219,7 +222,7 @@ export default function ProductDetailClient({ product, relatedProducts }) {
                 ))}
               </div>
               {sizeError && (
-                <p className="text-xs text-red-500" role="alert">Please select a size before adding to cart.</p>
+                <p id="size-error" className="text-xs text-red-500" role="alert">Please select a size before adding to cart.</p>
               )}
             </div>
           )}
@@ -269,10 +272,10 @@ export default function ProductDetailClient({ product, relatedProducts }) {
               className="mb-3 text-2xl font-bold text-ink sm:text-3xl"
               style={{ fontFamily: 'var(--font-playfair)' }}
             >
-              Customize with your tea
+              Try a design preview
             </h2>
             <p className="text-neutral-500 max-w-md mx-auto">
-              Upload a photo of your tea and place it on the product. Download your preview when you&apos;re happy with it.
+              Try your own image on this product and download the mockup. This is a preview tool; orders contain the plain product without your uploaded design.
             </p>
           </div>
           <MockupEditor

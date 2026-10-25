@@ -15,7 +15,7 @@ export default function NotFound() {
         Page not found
       </h1>
       <p className="text-neutral-500 max-w-sm">
-        This page steeped too long and disappeared. Let&apos;s get you back.
+        We couldn&apos;t find this page. Let&apos;s get you back to the shop.
       </p>
       <div className="flex flex-col sm:flex-row gap-3">
         <Link

@@ -1,34 +1,25 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import ProductGrid from '@/components/ProductGrid'
 import { getProducts } from '@/lib/products'
 
-const FILTERS = ['All', 'Classic', 'Minimal']
+const FILTERS = ['All', 'Clothing', 'Accessories']
 const SORTS = [
   { value: 'default', label: 'Featured' },
   { value: 'price-asc', label: 'Price: low to high' },
   { value: 'price-desc', label: 'Price: high to low' },
 ]
 
-const HEADING = {
-  All: 'Everything',
-  Classic: 'Classic',
-  Minimal: 'Minimal',
-}
-
 export default function ShopPage() {
   const [activeFilter, setActiveFilter] = useState('All')
   const [activeSort, setActiveSort] = useState('default')
 
-  const count = useMemo(() => {
-    const all = getProducts()
-    return activeFilter === 'All'
-      ? all.length
-      : all.filter((p) => p.category === activeFilter).length
-  }, [activeFilter])
-
-  const total = getProducts().length
+  const products = getProducts()
+  const count = activeFilter === 'All'
+    ? products.length
+    : products.filter((product) => product.category === activeFilter).length
+  const total = products.length
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
@@ -37,9 +28,12 @@ export default function ShopPage() {
           className="text-4xl font-bold text-ink sm:text-5xl"
           style={{ fontFamily: 'var(--font-playfair)' }}
         >
-          {HEADING[activeFilter]}
+          Plain essentials
         </h1>
-        <p className="text-sm text-neutral-400">
+        <p className="mt-3 max-w-xl text-base text-neutral-500">
+          Solid colours. No prints. Everyday clothing and accessories in five colours.
+        </p>
+        <p className="mt-2 text-sm text-neutral-500" role="status">
           {count === total
             ? `${total} items`
             : `Showing ${count} of ${total}`}
@@ -79,6 +73,13 @@ export default function ShopPage() {
       </div>
 
       <ProductGrid filter={activeFilter} sort={activeSort} />
+
+      <section className="mt-16 border-t border-neutral-200 pt-8" aria-labelledby="designs-heading">
+        <h2 id="designs-heading" className="text-xl font-semibold text-ink">Original designs, coming later</h2>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral-500">
+          A separate collection of designed shirts is in the works. For now, explore the plain essentials above.
+        </p>
+      </section>
     </div>
   )
 }

@@ -42,12 +42,33 @@ const PRINT_CONFIGS = {
   },
 }
 
-function loadNativeImage(src) {
+function loadNativeImage(src, signal) {
   return new Promise((resolve, reject) => {
     const img = new window.Image()
+    const cleanup = () => {
+      img.onload = null
+      img.onerror = null
+      signal?.removeEventListener('abort', abort)
+    }
+    const abort = () => {
+      cleanup()
+      img.src = ''
+      reject(new DOMException('Image loading cancelled', 'AbortError'))
+    }
+    if (signal?.aborted) {
+      abort()
+      return
+    }
     img.crossOrigin = 'anonymous'
-    img.onload = () => resolve(img)
-    img.onerror = reject
+    img.onload = () => {
+      cleanup()
+      resolve(img)
+    }
+    img.onerror = () => {
+      cleanup()
+      reject(new Error('Image could not be loaded'))
+    }
+    signal?.addEventListener('abort', abort, { once: true })
     img.src = src
   })
 }
@@ -87,23 +108,25 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
   const canvasElRef = useRef(null)
   const fabricRef = useRef(null)
   const printAreaRef = useRef(null)
-  const disposedRef = useRef(false)
   const guideRef = useRef(null)
   const artworkStateRef = useRef({ front: null, back: null })
-  const prevSideRef = useRef(selectedSide)
-  const isFirstSwap = useRef(true)
+  const displayedSideRef = useRef(null)
+  const displayedProductRef = useRef(null)
+  const imageRequestRef = useRef(0)
 
-  const [isReady, setIsReady] = useState(false)
+  const [imageResult, setImageResult] = useState(null)
+  const [retryCount, setRetryCount] = useState(0)
   const [hasTeaImage, setHasTeaImage] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
   const outerRef = useRef(null)
   const [displayScale, setDisplayScale] = useState(1)
+  const selectionKey = JSON.stringify([product.id, product.type, shirtImageUrl, selectedSide, retryCount])
+  const isCurrentResult = imageResult?.key === selectionKey
+  const imageError = isCurrentResult ? imageResult.error : null
+  const isReady = isCurrentResult && !imageError
 
-  // Init once: create canvas and load the first shirt image
   useEffect(() => {
-    disposedRef.current = false
-    isFirstSwap.current = true
 
     const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
     const canvas = new fabric.Canvas(canvasElRef.current, {
@@ -114,81 +137,29 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
     })
     fabricRef.current = canvas
 
-    loadNativeImage(shirtImageUrl)
-      .then((htmlImg) => {
-        if (disposedRef.current) return
-
-        const { imgScale, imgLeft, imgTop, printArea } = computeLayout(htmlImg, product.type, selectedSide)
-        printAreaRef.current = printArea
-
-        const fabricImg = new fabric.FabricImage(htmlImg)
-        fabricImg._isShirt = true
-        fabricImg.set({
-          originX: 'left', originY: 'top',
-          left: imgLeft, top: imgTop,
-          scaleX: imgScale, scaleY: imgScale,
-          selectable: false, evented: false, hoverCursor: 'default',
-        })
-        canvas.add(fabricImg)
-
-        const guide = new fabric.Rect({
-          left: printArea.left, top: printArea.top,
-          originX: 'left', originY: 'top',
-          width: printArea.width, height: printArea.height,
-          fill: 'transparent',
-          stroke: '#8B5E3C', strokeWidth: 1.5,
-          strokeDashArray: [6, 4],
-          selectable: false, evented: false, opacity: 0.8,
-        })
-        guide._isGuide = true
-        guideRef.current = guide
-        canvas.add(guide)
-
-        canvas.renderAll()
-        setIsReady(true)
-      })
-      .catch(() => {
-        if (!disposedRef.current) setError('Could not load the product image.')
-      })
-
     return () => {
-      disposedRef.current = true
-      isFirstSwap.current = true
+      imageRequestRef.current += 1
+      fabricRef.current = null
+      guideRef.current = null
+      displayedSideRef.current = null
+      displayedProductRef.current = null
+      artworkStateRef.current = { front: null, back: null }
       canvas.dispose()
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
-  // Swap: runs when colour or side changes after init — preserves artwork
   useEffect(() => {
-    if (!isReady || !fabricRef.current) return
-
-    if (isFirstSwap.current) {
-      isFirstSwap.current = false
-      prevSideRef.current = selectedSide
-      return
-    }
-
     const canvas = fabricRef.current
-    const sideChanged = prevSideRef.current !== selectedSide
-    const prevSide = prevSideRef.current
-    prevSideRef.current = selectedSide
+    if (!canvas) return
+    const controller = new AbortController()
+    const requestId = ++imageRequestRef.current
 
     async function doSwap() {
       try {
-        if (sideChanged) {
-          const teaObj = canvas.getObjects().find((o) => o._isTea)
-          artworkStateRef.current[prevSide] = teaObj || null
-          if (teaObj) canvas.remove(teaObj)
-        }
-
-        const oldShirt = canvas.getObjects().find((o) => o._isShirt)
-        if (oldShirt) canvas.remove(oldShirt)
-
-        const htmlImg = await loadNativeImage(shirtImageUrl)
-        if (disposedRef.current) return
+        const htmlImg = await loadNativeImage(shirtImageUrl, controller.signal)
+        if (controller.signal.aborted || imageRequestRef.current !== requestId || fabricRef.current !== canvas) return
 
         const { imgScale, imgLeft, imgTop, printArea } = computeLayout(htmlImg, product.type, selectedSide)
-        printAreaRef.current = printArea
 
         const fabricImg = new fabric.FabricImage(htmlImg)
         fabricImg._isShirt = true
@@ -198,34 +169,55 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
           scaleX: imgScale, scaleY: imgScale,
           selectable: false, evented: false, hoverCursor: 'default',
         })
-        canvas.add(fabricImg)
-        canvas.sendObjectToBack(fabricImg)
-
-        if (guideRef.current) {
-          guideRef.current.set({
-            left: printArea.left, top: printArea.top,
-            width: printArea.width, height: printArea.height,
-          })
+        const sideChanged = displayedSideRef.current !== selectedSide
+        const productChanged = displayedProductRef.current !== product.id
+        const teaObj = canvas.getObjects().find((object) => object._isTea)
+        if (productChanged) {
+          artworkStateRef.current = { front: null, back: null }
+        } else if (sideChanged && displayedSideRef.current) {
+          artworkStateRef.current[displayedSideRef.current] = teaObj ?? null
         }
-
-        if (sideChanged) {
+        if (sideChanged || productChanged) {
+          canvas.discardActiveObject()
+          if (teaObj) canvas.remove(teaObj)
           const savedArtwork = artworkStateRef.current[selectedSide]
           if (savedArtwork) {
             canvas.add(savedArtwork)
-            canvas.bringObjectToFront(savedArtwork)
-            setHasTeaImage(true)
-          } else {
-            setHasTeaImage(false)
+            canvas.setActiveObject(savedArtwork)
           }
+          setHasTeaImage(Boolean(savedArtwork))
         }
-
+        const oldShirt = canvas.getObjects().find((object) => object._isShirt)
+        if (oldShirt) canvas.remove(oldShirt)
+        canvas.add(fabricImg)
+        canvas.sendObjectToBack(fabricImg)
+        if (!guideRef.current) {
+          const guide = new fabric.Rect({
+            originX: 'left', originY: 'top',
+            fill: 'transparent', stroke: '#8B5E3C', strokeWidth: 1.5,
+            strokeDashArray: [6, 4], selectable: false, evented: false, opacity: 0.8,
+          })
+          guide._isGuide = true
+          guideRef.current = guide
+          canvas.add(guide)
+        }
+        guideRef.current.set(printArea)
+        guideRef.current.setCoords()
+        printAreaRef.current = printArea
+        displayedSideRef.current = selectedSide
+        displayedProductRef.current = product.id
         canvas.renderAll()
-      } catch {
-        if (!disposedRef.current) setError('Could not load the product image.')
+        setError(null)
+        setImageResult({ key: selectionKey, error: null })
+      } catch (loadError) {
+        if (loadError.name !== 'AbortError' && !controller.signal.aborted && imageRequestRef.current === requestId) {
+          setImageResult({ key: selectionKey, error: 'Could not load the selected product image.' })
+        }
       }
     }
     doSwap()
-  }, [isReady, shirtImageUrl, selectedSide]) // eslint-disable-line react-hooks/exhaustive-deps
+    return () => controller.abort()
+  }, [shirtImageUrl, selectedSide, product.id, product.type, selectionKey])
 
   // Responsive resize
   useEffect(() => {
@@ -251,7 +243,10 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
 
   const handleFileUpload = useCallback(async (e) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    const canvas = fabricRef.current
+    const requestId = imageRequestRef.current
+    if (!file || !canvas || !isReady) return
+    const isCurrentUpload = () => fabricRef.current === canvas && imageRequestRef.current === requestId
 
     const allowed = ['image/jpeg', 'image/png', 'image/webp']
     if (!allowed.includes(file.type)) {
@@ -276,17 +271,12 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
 
       objectUrl = URL.createObjectURL(compressed)
 
-      if (disposedRef.current) return
-
-      const canvas = fabricRef.current
-      const printArea = printAreaRef.current
-
-      const existing = canvas.getObjects().find((o) => o._isTea)
-      if (existing) canvas.remove(existing)
+      if (!isCurrentUpload()) return
 
       const htmlImg = await loadNativeImage(objectUrl)
 
-      if (disposedRef.current) return
+      if (!isCurrentUpload()) return
+      const printArea = printAreaRef.current
 
       const fabricImg = new fabric.FabricImage(htmlImg)
       fabricImg._isTea = true
@@ -313,6 +303,8 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
         transparentCorners: false,
       })
 
+      const existing = canvas.getObjects().find((o) => o._isTea)
+      if (existing) canvas.remove(existing)
       canvas.add(fabricImg)
       canvas.bringObjectToFront(fabricImg)
       canvas.setActiveObject(fabricImg)
@@ -320,17 +312,17 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
 
       setHasTeaImage(true)
     } catch {
-      if (!disposedRef.current) setError('Something went wrong processing the image. Try again.')
+      if (isCurrentUpload()) setError('Something went wrong processing the image. Try again.')
     } finally {
       if (objectUrl) URL.revokeObjectURL(objectUrl)
-      setIsLoading(false)
+      if (fabricRef.current === canvas) setIsLoading(false)
       e.target.value = ''
     }
-  }, [])
+  }, [isReady])
 
   function handleDownload() {
     const canvas = fabricRef.current
-    if (!canvas) return
+    if (!canvas || !isReady) return
     const dimensions = { width: canvas.getWidth(), height: canvas.getHeight() }
     const viewport = [...canvas.viewportTransform]
 
@@ -348,7 +340,7 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
         enableRetinaScaling: false,
       })
       const link = document.createElement('a')
-      link.download = 'tea-shirt-preview.png'
+      link.download = 'product-preview.png'
       link.href = dataUrl
       link.click()
     } catch {
@@ -365,7 +357,7 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
 
   function handleCanvasKeyDown(e) {
     const canvas = fabricRef.current
-    if (!canvas) return
+    if (!canvas || !isReady) return
     const obj = canvas.getActiveObject()
     if (!obj) return
 
@@ -384,6 +376,7 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
 
   function handleRemoveTea() {
     const canvas = fabricRef.current
+    if (!canvas || !isReady) return
     const existing = canvas.getObjects().find((o) => o._isTea)
     if (existing) {
       canvas.remove(existing)
@@ -405,12 +398,12 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
         onKeyDown={handleCanvasKeyDown}
       >
         <canvas ref={canvasElRef} />
-        {!isReady && !error && (
+        {!isReady && (
           <div
             className="absolute inset-0 flex items-center justify-center bg-neutral-100 rounded-2xl"
-            aria-label="Loading editor"
+            role="status"
           >
-            <span className="text-sm text-neutral-500">Loading editor…</span>
+            <span className="text-sm text-neutral-500">{imageError ? 'Preview unavailable' : 'Loading editor…'}</span>
           </div>
         )}
       </div>
@@ -443,14 +436,14 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
               />
             </svg>
-            {isLoading ? 'Processing…' : 'Upload your tea photo'}
+            {isLoading ? 'Processing…' : 'Upload your image'}
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
               className="sr-only"
               onChange={handleFileUpload}
               disabled={isLoading}
-              aria-label="Upload a photo of your tea"
+              aria-label="Upload an image for your preview"
             />
           </label>
 
@@ -466,7 +459,7 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
                 <button
                   onClick={handleDownload}
                   className="flex-1 inline-flex items-center justify-center rounded-full border border-brand px-5 py-3 text-sm font-semibold text-brand-text hover:bg-brand/5 transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
-                  aria-label="Download shirt preview as PNG"
+                  aria-label="Download product preview as PNG"
                 >
                   Download preview
                 </button>
@@ -482,9 +475,9 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
                 <button
                   onClick={onAddToCart}
                   className="w-full inline-flex items-center justify-center rounded-full bg-brand px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
-                  aria-label="Add product to cart"
+                  aria-label="Add plain product to cart"
                 >
-                  {added ? 'Added to cart!' : 'Add to cart'}
+                  {added ? 'Plain product added!' : 'Add plain product to cart'}
                 </button>
               )}
             </div>
@@ -492,8 +485,17 @@ export default function MockupEditor({ product, selectedSide = 'front', shirtIma
         </div>
       )}
 
-      {error && !isReady && (
-        <p className="text-sm text-red-500 text-center" role="alert">{error}</p>
+      {imageError && (
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-center text-sm text-red-500" role="alert">{imageError}</p>
+          <button
+            type="button"
+            onClick={() => setRetryCount((count) => count + 1)}
+            className="rounded-full border border-brand px-5 py-3 text-sm font-semibold text-brand-text hover:bg-brand/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            Retry preview
+          </button>
+        </div>
       )}
     </div>
   )

@@ -1,6 +1,6 @@
-# Tea-shirts
+# Plain essentials
 
-A full-stack e-commerce portfolio project built with Next.js 16. Browse and purchase tea-themed apparel and accessories, with a canvas-based product customiser that lets you upload a photo of your tea and place it on any product.
+A full-stack e-commerce portfolio project built with Next.js 16. Browse plain clothing and accessories in five solid colours. A canvas-based preview tool lets you try your own image on a product and download a mockup. Uploaded artwork is not attached to the cart or checkout; orders contain plain products. A separate collection of original shirt designs is planned.
 
 **Live demo:** [teakauppa.vercel.app](https://teakauppa.vercel.app)
 
